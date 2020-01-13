@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="MySQL - flask@localhost" uuid="bcdc05b5-5f94-4f34-93fa-bcf472bc0df4">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/flask</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="transfer@localhost" uuid="251d27b0-6004-4faa-b1b7-2c561388ffec">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/transfer</jdbc-url>
+    </data-source>
+  </component>
+</project>

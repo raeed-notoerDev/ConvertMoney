@@ -1,0 +1,44 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// BULMA
+@import '~bulma/bulma';
+
+//fontawosem
+@import "~@fortawesome/fontawesome-free/css/all.min.css";
+
+//bootstrap
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+
+@media print {
+    .nav.nav-tabs li:not(.active) {
+        display: none;
+    }
+    //.invoice {
+    //    padding: 10px 20px;
+    //}
+    //
+    //.invoice {
+    //    background-position: center center;
+    //    background-repeat: no-repeat;
+    //
+    //}
+    .table-responsive table {
+        background-color: transparent !important;
+    }
+    .aside {
+        display: none !important;
+    }
+    .print-none {
+        display: none !important;
+    }
+}
+
+
+@page {
+    margin: 0;
+}
