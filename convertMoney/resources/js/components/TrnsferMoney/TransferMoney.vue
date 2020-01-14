@@ -26,15 +26,15 @@
                 <table class="table is-fullwidth">
                     <tbody>
                     <tr>
-                        <td>Name Agent Sender</td>
+                        <td> Agent Sender Name</td>
                         <td><strong>{{member.first_name}} {{member.last_name}}</strong></td>
                     </tr>
                     <tr>
-                        <td>Country Agent Sender</td>
+                        <td> Agent Sender Country</td>
                         <td><strong>{{country_member}}</strong></td>
                     </tr>
                     <tr>
-                        <td>Address Agent Sender</td>
+                        <td>Agent Sender Address</td>
                         <td><strong>{{ member.address}}</strong></td>
                     </tr>
                     </tbody>
@@ -43,7 +43,7 @@
             <div class="column ">
             </div>
         </div>
-        <form @submit.prevent="send_money()">
+        <form @submit.prevent="send_money">
             <div class="tabcontent" style="display: block" id="transaction-information">
                 <div class="columns">
                     <div class="column"></div>
@@ -226,7 +226,6 @@
                                 type="search"
                                 class="input is-size-6 "
                                 v-model="sender_full_name"
-                                @keyup="searchit"
                             />
                         </div>
                         <div v-show="beneficiaries!==null" v-for="beneficiary in beneficiaries"
@@ -447,7 +446,6 @@
                                 type="text"
                                 class="input is-size-6 "
                                 v-model="receiver_full_name"
-                                @keyup="searchitR"
                             />
                         </div>
                         <div v-show="beneficiariesR!==null" v-for="beneficiary in beneficiariesR"
@@ -620,13 +618,6 @@
                 beneficiaries: [],
                 beneficiariesR: [],
                 button: true,
-                year: new Date().getFullYear(),
-                day: new Date().getDate(),
-                hour: new Date().getHours(),
-                minute: new Date().getMinutes(),
-                month: new Date().getUTCMonth(),
-                second: new Date().getSeconds()
-
                 // dropzoneOptions: {
                 //     url: this.url_images,
                 //     thumbnailWidth: 40,
@@ -689,7 +680,7 @@
                 let limit = 1024 * 1024 * 2;
                 if (file['size'] > limit) {
                     swal.fire({
-                        type: 'error',
+                        type: 'info',
                         title: 'Oops...',
                         text: 'You are uploading a large file',
                     });
@@ -710,7 +701,7 @@
 
             },
             sendMoney() {
-                Fire.$emit('Newcode');
+
                 axios.post('/api/create-transaction', {
                     code: this.code,
                     address_sender: this.address_sender,
@@ -736,14 +727,14 @@
                     this.route = true;
                     if (this.route === true)
                         this.$router.push('/fish/' + this.code);
-                    Fire.$emit('Newcode');
+
                 }).catch(error => {
                     this.button = true;
                     console.log(error.response.data.message);
                     swal.fire(
                         'You Cant Send!',
                         [error.response.data.message['sender_full_name'], error.response.data.message['sender_phone_number'], error.response.data.message['receiver_phone_number'], error.response.data.message] + "",
-                        'error'
+                        'info'
                     );
                 });
             },
@@ -775,9 +766,8 @@
             code_transaction() {
                 axios.get('/api/transaction').then(response => {
                     this.code = response.data.code;
-                    console.log(this.code);
                 });
-                return this.code;
+                console.log(this.code);
             },
             url_images() {
                 return 'http://localhost:8000/api/image-transaction/' + this.code;
@@ -801,6 +791,7 @@
             }
         },
         created() {
+            this.code_transaction();
             this.infoMember();
             this.sellectAllCurrency();
             this.sellectAllCountry();

@@ -193,6 +193,9 @@ class SettingController extends Controller
             Setting::where('key', 'commission_currency')->update([
                 'value' => $request->commission_currency
             ]);
+            Setting::where('key', 'current_currency')->update([
+                'value' => $request->current_currency
+            ]);
         } catch (\Exception $exception) {
             error_log($exception->getMessage());
         }

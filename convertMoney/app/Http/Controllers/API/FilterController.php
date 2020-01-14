@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Beneficiary;
+use App\Country;
 use App\Http\Controllers\Controller;
 use App\Transaction;
 use App\User;
@@ -129,7 +130,8 @@ class FilterController extends Controller
                 return response()->json($this->list_transaction($transactions));
 
             }
-            elseif ($request['date_to'] !== 'all') {
+            elseif ($request['date_to'] !== 'all')
+            {
                 if ($request['status'] !== 'all') {
                     if ($request['agent'] !== 'all') {
                         $transactions = DB::table('users')
@@ -181,19 +183,22 @@ class FilterController extends Controller
                 return response()->json($this->list_transaction($transactions));
             }
             elseif ($request['agent'] !== 'all') {
+                error_log('agents');
+                error_log($request['agent']);
                 $transactions = DB::table('users')
                     ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
                     ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
                     ->select('transactions.*')
                     ->where('transactions.agent_id_sender', $request['agent'])
-                    ->where('transactions.agent_id_receiver', $request['agent'])
+                    ->orWhere('transactions.agent_id_receiver', $request['agent'])
                     ->get();
+                error_log($transactions);
                 return response()->json($this->list_transaction($transactions));
             }
             $transactions = DB::table('users')
                 ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
                 ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                ->select('transactions.*', 'countries.*')
+                ->select('transactions.*')
                 ->get();
             return response()->json($this->list_transaction($transactions));
 
@@ -217,7 +222,7 @@ class FilterController extends Controller
                 'currency_receiver_id' => $transactions[$i]->currency_receiver_id,
                 'agent_sender' => User::where('ref_id', $transactions[$i]->agent_id_sender)->first()['first_name'] . '   ' . User::where('ref_id', $transactions[$i]->agent_id_sender)->first()['last_name'],
                 'agent_receiver' => User::where('ref_id', $transactions[$i]->agent_id_receiver)->first()['first_name'] . '   ' . User::where('ref_id', $transactions[$i]->agent_id_receiver)->first()['last_name'],
-                'city_destination' => $transactions[$i]->name,
+                'city_destination' =>$transactions[$i]->receiver_country_id ,
                 'status' => $transactions[$i]->status,
                 'date' => $transactions[$i]->created_at,
                 'convert_price' => $transactions[$i]->convert_price,

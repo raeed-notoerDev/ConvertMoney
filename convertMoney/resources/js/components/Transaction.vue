@@ -136,7 +136,7 @@
                     <td>{{ transaction.agent_sender }}</td>
                     <td>{{ transaction.agent_receiver }}</td>
                     <td>{{ transaction.convert_price }}</td>
-                    <td>{{ transaction.date | MyDate }}</td>
+                    <td>{{ transaction.date | myDate }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -180,7 +180,8 @@
                         status: this.status,
                         date_from: this.date_from,
                         date_to: this.date_to,
-                        agent: this.agent
+                        agent: this.agent,
+
                     }
                 ).then(response => {
                     console.log(response);

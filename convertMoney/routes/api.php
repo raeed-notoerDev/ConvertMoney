@@ -62,6 +62,7 @@ Route::group([
     Route::get('/setting-country', 'API\SettingController@allCountry');
     Route::patch('/setting-currency', 'API\SettingController@update_currency');
     Route::patch('/setting-country', 'API\SettingController@update_country');
+    Route::patch('/setting-currency_current', 'API\SettingController@update_country');
     Route::delete('/setting-currency/{id}', 'API\SettingController@deleteCurrency');
     Route::delete('/setting-country/{id}', 'API\SettingController@deleteCountry');
 

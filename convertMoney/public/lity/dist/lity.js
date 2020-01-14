@@ -38,7 +38,7 @@
             facebookvideo: facebookvideoHandler,
             iframe: iframeHandler
         },
-        template: '<div class="lity" role="dialog" aria-label="Dialog Window (Press escape to close)" tabindex="-1"><div class="lity-wrap" data-lity-close role="document"><div class="lity-loader" aria-hidden="true">Loading...</div><div class="lity-container"><div class="lity-content"></div><button class="lity-close" type="button" aria-label="Close (Press escape to close)" data-lity-close>&times;</button></div></div></div>'
+        template: '<div class="lity" role="dialog" aria-label="Dialog Window (Press escape to close)" tabindex="-1"><div class="lity-wrap" data-lity-close role="document"><div class="lity-loader" aria-hidden="true">Loading...</div><div class="lity-container"><div class="lity-content"></div><button class="lity-close" type="button" aria-label="Close (Press escape to close)" data-lity-close>Close</button><button class="lity-print" type="button" aria-label="Print (Click  to print)" data-lity-print>Print</button></div></div></div>'
     };
 
     var _imageRegexp = /(^data:image\/)|(\.(png|jpe?g|gif|svg|webp|bmp|ico|tiff?)(\?\S*)?$)/i;
@@ -562,6 +562,20 @@
             })
             .trigger('lity:open', [self])
         ;
+        //print
+        element
+            .attr(_attrAriaHidden, 'false')
+            .addClass('lity-loading lity-opened lity-' + result.handler)
+            .appendTo('body')
+            .focus()
+            .on('click', '[data-lity-print]', function(e) {
+                if ($(e.target).is('[data-lity-print]')) {
+                    window.print();
+                }
+            })
+            .trigger('lity:open', [self])
+        ;
+        //print
 
         registerInstance(self);
 

@@ -2258,6 +2258,11 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+
 //
 //
 //
@@ -2352,8 +2357,135 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "FishTransaction"
+  name: "FishTransaction",
+  data: function data() {
+    return {
+      code: this.$route.params.code,
+      transfer: {},
+      commission: "",
+      amount: "",
+      currency_sender_id: "",
+      currency_receiver_id: "",
+      convert_price: "",
+      receiver_money: "",
+      images: [],
+      receiver_full_name: "",
+      receiver_phone_number: ""
+    };
+  },
+  methods: {
+    getTransactionPhoto: function getTransactionPhoto(picture) {
+      return "/images/" + picture;
+    },
+    details_transaction: function details_transaction() {
+      var _this = this;
+
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function details_transaction$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              console.log(this.$route.params.code);
+              _context.next = 3;
+              return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/api/show-transaction/' + this.code).then(function (response) {
+                _this.transfer = response.data.transaction;
+                _this.commission = response.data.transaction.commission;
+                _this.amount = response.data.transaction.total_money;
+                _this.currency_sender_id = response.data.transaction.currency_sender;
+                _this.currency_receiver_id = response.data.transaction.currency_receiver;
+                _this.convert_price = response.data.transaction.convert_price;
+                _this.receiver_money = response.data.transaction.receiver_money;
+                _this.images = response.data.images;
+              })["catch"](function (error) {
+                return console.log(error);
+              }));
+
+            case 3:
+              this.receiver_full_name = this.transfer.receiver_full_name;
+              this.receiver_phone_number = this.transfer.phone_number_receiver;
+
+            case 5:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, null, this);
+    },
+    printme: function printme() {
+      window.print();
+    }
+  },
+  created: function created() {
+    this.details_transaction();
+  },
+  computed: {
+    calcTotal: function calcTotal() {
+      return this.amount = this.amount - this.commission;
+    },
+    totalAmount: function totalAmount() {
+      var n1 = Number(this.amount);
+      this.commission = n1 * 0.15;
+      this.total_money = n1 * 0.15 + n1;
+      return this.total_money;
+    }
+  }
 });
 
 /***/ }),
@@ -2913,40 +3045,69 @@ __webpack_require__.r(__webpack_exports__);
       wallet: '',
       commission: '',
       nationality: '',
-      zip_code: ''
+      zip_code: '',
+      currency_current: "TRY",
+      convert_price: null,
+      account: null
     };
   },
   methods: {
-    details_member: function details_member() {
+    convert: function convert() {
       var _this = this;
 
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function details_member$(_context) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function convert$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
+              return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/setting/current_currency').then(function (data) {
+                return _this.currency_current = data.data;
+              }));
+
+            case 2:
+              _context.next = 4;
+              return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("https://free.currconv.com/api/v7/convert?q=USD_" + this.currency_current + "&compact=ultra&apiKey=301cb83516aa3d45d387").then(function (response) {
+                _this.convert_price = response.data["USD_" + _this.currency_current];
+                _this.account = _this.wallet * _this.convert_price;
+              }));
+
+            case 4:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, null, this);
+    },
+    details_member: function details_member() {
+      var _this2 = this;
+
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function details_member$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.next = 2;
               return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/member/' + this.code).then(function (response) {
-                _this.member = response.data.member;
-                _this.last_name = response.data.member.last_name;
-                _this.first_name = response.data.member.first_name;
-                _this.user_name = response.data.member.user_name;
-                _this.phone_number = response.data.member.phone_number;
-                _this.email = response.data.member.email;
-                _this.status = response.data.member.status;
-                _this.wallet = response.data.member.wallet;
-                _this.commission = response.data.member.agent_commission;
-                _this.password = response.data.member.password;
-                _this.nationality = response.data.member.nationality;
-                _this.zip_code = response.data.member.zip_code;
-                _this.gender = response.data.member.gender;
-                _this.address = response.data.member.address;
+                _this2.member = response.data.member;
+                _this2.last_name = response.data.member.last_name;
+                _this2.first_name = response.data.member.first_name;
+                _this2.user_name = response.data.member.user_name;
+                _this2.phone_number = response.data.member.phone_number;
+                _this2.email = response.data.member.email;
+                _this2.status = response.data.member.status;
+                _this2.wallet = response.data.member.wallet;
+                _this2.commission = response.data.member.agent_commission;
+                _this2.password = response.data.member.password;
+                _this2.nationality = response.data.member.nationality;
+                _this2.zip_code = response.data.member.zip_code;
+                _this2.gender = response.data.member.gender;
+                _this2.address = response.data.member.address;
               })["catch"](function (error) {
                 return console.log(error);
               }));
 
             case 2:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
         }
       }, null, this);
@@ -2981,7 +3142,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     updateProfile: function updateProfile(e) {
-      var _this2 = this;
+      var _this3 = this;
 
       var file = e.target.files[0];
       var reader = new FileReader();
@@ -2996,7 +3157,7 @@ __webpack_require__.r(__webpack_exports__);
       // }
 
       reader.onloadend = function (file) {
-        _this2.picture = reader.result;
+        _this3.picture = reader.result;
       };
 
       reader.readAsDataURL(file);
@@ -3004,6 +3165,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     this.details_member();
+    this.convert();
   }
 });
 
@@ -4101,13 +4263,42 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Commission",
   data: function data() {
     return {
       commission_currency: "",
-      commission_admin: ""
+      commission_admin: "",
+      currency_current: ""
     };
   },
   methods: {
@@ -4120,12 +4311,16 @@ __webpack_require__.r(__webpack_exports__);
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('api/setting/commission_admin').then(function (data) {
         return _this.commission_admin = data.data;
       });
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('api/setting/current_currency').then(function (data) {
+        return _this.currency_current = data.data;
+      });
     },
     updateCommission: function updateCommission() {
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch('api/setting-commission', {
         commission_admin: this.commission_admin,
-        commission_currency: this.commission_currency
-      }).then(swal.fire("Commission!", "Commission Updated!", "success"))["catch"]();
+        commission_currency: this.commission_currency,
+        current_currency: this.currency_current
+      }).then(swal.fire("Finances !", "DATA Updated!", "success"))["catch"]();
     }
   },
   created: function created() {
@@ -4768,6 +4963,28 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5750,8 +5967,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 
 
@@ -5791,13 +6006,7 @@ __webpack_require__.r(__webpack_exports__);
       name_image: null,
       beneficiaries: [],
       beneficiariesR: [],
-      button: true,
-      year: new Date().getFullYear(),
-      day: new Date().getDate(),
-      hour: new Date().getHours(),
-      minute: new Date().getMinutes(),
-      month: new Date().getUTCMonth(),
-      second: new Date().getSeconds() // dropzoneOptions: {
+      button: true // dropzoneOptions: {
       //     url: this.url_images,
       //     thumbnailWidth: 40,
       //     thumbnailHeight: 30,
@@ -5868,7 +6077,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (file['size'] > limit) {
         swal.fire({
-          type: 'error',
+          type: 'info',
           title: 'Oops...',
           text: 'You are uploading a large file'
         });
@@ -5904,7 +6113,6 @@ __webpack_require__.r(__webpack_exports__);
     sendMoney: function sendMoney() {
       var _this5 = this;
 
-      Fire.$emit('Newcode');
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/api/create-transaction', {
         code: this.code,
         address_sender: this.address_sender,
@@ -5929,11 +6137,10 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         _this5.route = true;
         if (_this5.route === true) _this5.$router.push('/fish/' + _this5.code);
-        Fire.$emit('Newcode');
       })["catch"](function (error) {
         _this5.button = true;
         console.log(error.response.data.message);
-        swal.fire('You Cant Send!', [error.response.data.message['sender_full_name'], error.response.data.message['sender_phone_number'], error.response.data.message['receiver_phone_number'], error.response.data.message] + "", 'error');
+        swal.fire('You Cant Send!', [error.response.data.message['sender_full_name'], error.response.data.message['sender_phone_number'], error.response.data.message['receiver_phone_number'], error.response.data.message] + "", 'info');
       });
     },
     sellectAllCurrency: function sellectAllCurrency() {
@@ -6002,9 +6209,8 @@ __webpack_require__.r(__webpack_exports__);
 
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/transaction').then(function (response) {
         _this9.code = response.data.code;
-        console.log(_this9.code);
       });
-      return this.code;
+      console.log(this.code);
     },
     url_images: function url_images() {
       return 'http://localhost:8000/api/image-transaction/' + this.code;
@@ -6028,6 +6234,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this10 = this;
 
+    this.code_transaction();
     this.infoMember();
     this.sellectAllCurrency();
     this.sellectAllCountry();
@@ -61205,146 +61412,327 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "print-none" }, [
+      _c(
+        "a",
+        {
+          staticClass: "level-right",
+          on: {
+            click: function($event) {
+              return _vm.printme()
+            }
+          }
+        },
+        [_c("i", { staticClass: "fas fa-print" }), _vm._v(" Print\n        ")]
+      )
+    ]),
+    _vm._v(" "),
+    _vm._m(0),
+    _vm._v(" "),
+    _c("hr"),
+    _vm._v(" "),
+    _c("div", { staticClass: "columns" }, [
+      _c("table", { staticClass: "table transaction" }, [
+        _c("tbody", [
+          _c("tr", [
+            _c("td", [_vm._v("TCN")]),
+            _vm._v(" "),
+            _c("td", [
+              _c("strong", { staticClass: "is-size-4" }, [
+                _vm._v(_vm._s(this.$route.params.code))
+              ])
+            ])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [
+              _vm._v("\n                    Amount\n                ")
+            ]),
+            _vm._v(" "),
+            _c("td", [
+              _vm._v(
+                "\n                    " +
+                  _vm._s(_vm.calcTotal) +
+                  " (" +
+                  _vm._s(_vm.currency_sender_id) +
+                  ")\n                "
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [
+              _vm._v("\n                    Commission\n                ")
+            ]),
+            _vm._v(" "),
+            _c("td", [
+              _vm._v(
+                "\n                    " +
+                  _vm._s(_vm.commission) +
+                  " " +
+                  _vm._s(_vm.currency_sender_id) +
+                  "\n                "
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [_vm._v("Tax")]),
+            _vm._v(" "),
+            _c("td", [_vm._v("0 " + _vm._s(_vm.currency_sender_id))])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [_vm._v("Total Amount Paid")]),
+            _vm._v(" "),
+            _c("td", [
+              _vm._v(
+                _vm._s(_vm.totalAmount) + " " + _vm._s(_vm.currency_sender_id)
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [_vm._v("Exchange Rate")]),
+            _vm._v(" "),
+            _c("td", [
+              _vm._v(
+                "20 " +
+                  _vm._s(_vm.currency_sender_id) +
+                  " = 100 " +
+                  _vm._s(_vm.currency_receiver_id) +
+                  " "
+              ),
+              _c("br"),
+              _vm._v(
+                "(1 " +
+                  _vm._s(_vm.currency_sender_id) +
+                  " = " +
+                  _vm._s(_vm.convert_price) +
+                  " " +
+                  _vm._s(_vm.currency_receiver_id) +
+                  ")"
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("tr", { staticClass: "has-background-grey-lighter" }, [
+            _c("td", [_vm._v("Total Amount Send")]),
+            _vm._v(" "),
+            _c("td", [_vm._v(" 100  " + _vm._s(_vm.currency_receiver_id))])
+          ])
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _vm._m(1),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _vm._m(2),
+    _vm._v(" "),
+    _c("hr"),
+    _vm._v(" "),
+    _vm._m(3),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _vm._m(4),
+    _vm._v(" "),
+    _c("hr"),
+    _vm._v(" "),
+    _vm._m(5),
+    _vm._v(" "),
+    _vm.images !== null
+      ? _c(
+          "div",
+          { staticClass: "columns" },
+          _vm._l(_vm.images, function(image) {
+            return _c("div", { staticClass: "column" }, [
+              _c(
+                "div",
+                {
+                  staticClass: "image is-128x128",
+                  staticStyle: { margin: "auto" }
+                },
+                [
+                  _c(
+                    "a",
+                    {
+                      attrs: {
+                        href: _vm.getTransactionPhoto(image.path),
+                        "data-lity": ""
+                      }
+                    },
+                    [
+                      _c("img", {
+                        staticClass: "is-128x128",
+                        staticStyle: { height: "inherit", width: "inherit" },
+                        attrs: {
+                          src: _vm.getTransactionPhoto(image.path),
+                          alt: "Image Transaction"
+                        }
+                      })
+                    ]
+                  )
+                ]
+              )
+            ])
+          }),
+          0
+        )
+      : _vm._e()
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", {}, [
-        _c("strong", { staticClass: "is-size-4" }, [
-          _vm._v(" Transaction Details")
-        ])
-      ]),
-      _vm._v(" "),
-      _c("hr"),
-      _vm._v(" "),
-      _c("div", { staticClass: "columns" }, [
-        _c("table", { staticClass: "table transaction" }, [
-          _c("tbody", [
-            _c("tr", [
-              _c("td", [_vm._v("Code Transaction")]),
+    return _c("div", {}, [
+      _c("strong", { staticClass: "is-size-4" }, [
+        _vm._v(" Transaction Details")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "columns" }, [
+      _c("table", { staticClass: "table agent" }, [
+        _c("tbody", [
+          _c("tr", [
+            _c("td", [_vm._v("PCN"), _c("br"), _vm._v("MNALKFO32")]),
+            _vm._v(" "),
+            _c("td", [
+              _vm._v("Agent Name"),
+              _c("br"),
+              _vm._v(
+                "\n                    MUHAMMED RAID CUMA\n                "
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [
+              _vm._v("Transaction Status"),
+              _c("br"),
               _vm._v(" "),
-              _c("td", [
-                _c("strong", { staticClass: "is-size-4" }, [_vm._v("CKIE34HT")])
+              _c("strong", { staticClass: "has-text-success" }, [
+                _vm._v("APPROVED")
               ])
             ]),
             _vm._v(" "),
-            _c("tr", [
-              _c("td", [
-                _vm._v("\n                    Amount\n                ")
-              ]),
-              _vm._v(" "),
-              _c("td", [
-                _vm._v("\n                    20 USD\n                ")
-              ])
+            _c("td", [
+              _vm._v("Transaction Date"),
+              _c("br"),
+              _vm._v("\n                    11/1/2020\n                ")
+            ])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [
+              _vm._v("Sending Country"),
+              _c("br"),
+              _vm._v("\n                    Turkey\n                ")
             ]),
             _vm._v(" "),
-            _c("tr", [
-              _c("td", [
-                _vm._v("\n                    Commission\n                ")
-              ]),
-              _vm._v(" "),
-              _c("td", [
-                _vm._v("\n                    5.0 USD\n                ")
-              ])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("Tax")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("0 USD")])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("Total Amount Paid")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("25 USD")])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("Exchange Rate")]),
-              _vm._v(" "),
-              _c("td", [
-                _vm._v("20 USD = 100 TRY "),
-                _c("br"),
-                _vm._v("(1 USD = 5.87 TRY)")
-              ])
-            ]),
-            _vm._v(" "),
-            _c("tr", { staticClass: "has-background-grey-lighter" }, [
-              _c("td", [_vm._v("Total Amount Send")]),
-              _vm._v(" "),
-              _c("td", [_vm._v(" 100 TRY")])
+            _c("td", [
+              _vm._v("Receiving Country"),
+              _c("br"),
+              _vm._v("\n                    IRAQ\n                ")
             ])
           ])
         ])
-      ]),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("div", { staticClass: "columns" }, [
-        _c("table", { staticClass: "table agent" }, [
-          _c("tbody", [
-            _c("tr", [
-              _c("td", [_vm._v("PCN"), _c("br"), _vm._v("MNALKFO32")]),
-              _vm._v(" "),
-              _c("td", [
-                _vm._v("Agent Name"),
-                _c("br"),
-                _vm._v(
-                  "\n                    MUHAMMED RAID CUMA\n                "
-                )
-              ])
-            ]),
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", {}, [
+      _c("strong", { staticClass: "is-size-4" }, [_vm._v(" Sender Details")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "columns" }, [
+      _c("table", { staticClass: "table" }, [
+        _c("tbody", [
+          _c("tr", [
+            _c("td", [_vm._v("Sender Name")]),
             _vm._v(" "),
-            _c("tr", [
-              _c("td", [
-                _vm._v("Transaction Status"),
-                _c("br"),
-                _vm._v(" "),
-                _c("strong", { staticClass: "has-text-success" }, [
-                  _vm._v("APPROVED")
-                ])
-              ]),
-              _vm._v(" "),
-              _c("td", [
-                _vm._v("Transaction Date"),
-                _c("br"),
-                _vm._v("\n                    11/1/2020\n                ")
-              ])
-            ]),
+            _c("td", [_vm._v("Muhammed")])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [_vm._v("Sender Country")]),
             _vm._v(" "),
-            _c("tr", [
-              _c("td", [
-                _vm._v("Sending Country"),
-                _c("br"),
-                _vm._v("\n                    Turkey\n                ")
-              ]),
-              _vm._v(" "),
-              _c("td", [
-                _vm._v("Receiving Country"),
-                _c("br"),
-                _vm._v("\n                    IRAQ\n                ")
-              ])
-            ])
+            _c("td", [_vm._v("Turkey")])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [_vm._v("Sender Address")]),
+            _vm._v(" "),
+            _c("td", [_vm._v("Turkey Istanbul Esen Sher mh D:1/3")])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [_vm._v("Sender Phone")]),
+            _vm._v(" "),
+            _c("td", [_vm._v("+90 534 773 95 76")])
           ])
         ])
-      ]),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("div", {}, [
-        _c("strong", { staticClass: "is-size-4" }, [_vm._v(" Sender Details")])
-      ]),
-      _vm._v(" "),
-      _c("hr"),
-      _vm._v(" "),
-      _c("div", { staticClass: "columns" }, [
-        _c("table", { staticClass: "table" }, [
-          _c("tbody", [_c("tr", [_c("td")])])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", {}, [
+      _c("strong", { staticClass: "is-size-4" }, [
+        _vm._v(" BENEFICIARY Details")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "columns" }, [
+      _c("table", { staticClass: "table" }, [
+        _c("tbody", [
+          _c("tr", [
+            _c("td", [_vm._v("Beneficiary Name")]),
+            _vm._v(" "),
+            _c("td", [_vm._v("EYMEN")])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [_vm._v("Beneficiary Country")]),
+            _vm._v(" "),
+            _c("td", [_vm._v("IRAQ")])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [_vm._v("Beneficiary Address")]),
+            _vm._v(" "),
+            _c("td", [_vm._v("IRAQ BAGHDAD SUL H:1/3")])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", [_vm._v("Beneficiary Phone")]),
+            _vm._v(" "),
+            _c("td", [_vm._v("+90 534 773 95 76")])
+          ])
         ])
       ])
     ])
@@ -61787,9 +62175,11 @@ var render = function() {
         _c("footer", { staticClass: "card-footer" }, [
           _c("div", { staticClass: "card-footer-item" }, [
             _vm._v(
-              "\n                    Wallet : ( " +
-                _vm._s(_vm.wallet) +
-                " )\n                "
+              "\n                    ACCOUNT : ( " +
+                _vm._s(_vm.account) +
+                " )" +
+                _vm._s(_vm.currency_current) +
+                "\n                "
             )
           ]),
           _vm._v(" "),
@@ -61809,7 +62199,7 @@ var render = function() {
             _vm._v(
               "\n                    Commission : (" +
                 _vm._s(_vm.commission) +
-                ")\n                "
+                ") %\n                "
             )
           ])
         ])
@@ -62187,8 +62577,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("span", { staticClass: " has-text" }, [
-      _c("div", { staticClass: "is-size-5" }),
-      _vm._v("HOLD ")
+      _c("div", { staticClass: "is-size-5" }, [_vm._v("HOLD ")])
     ])
   },
   function() {
@@ -64029,10 +64418,74 @@ var render = function() {
               _vm._v(" "),
               _c("div", { staticClass: "column " })
             ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "field" }, [
+            _c("div", { staticClass: "columns" }, [
+              _vm._m(5),
+              _vm._v(" "),
+              _c("div", { staticClass: "select column" }, [
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.currency_current,
+                        expression: "currency_current"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { name: "currency", required: "" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.currency_current = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      }
+                    }
+                  },
+                  [
+                    _c("option", { attrs: { value: "USD" } }, [
+                      _vm._v("US Dollar (USD) $")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "TRY" } }, [
+                      _vm._v(" Turkish Lira (TRY) ₺")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "EUR" } }, [
+                      _vm._v("Euro (EUR) €")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "GBP" } }, [
+                      _vm._v("British Pound (GBP) £")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "CHF" } }, [
+                      _vm._v("Swiss Franc (CHF) CHF")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "AUD" } }, [
+                      _vm._v(" Australian Dollar (AUD) AU$")
+                    ])
+                  ]
+                )
+              ])
+            ])
           ])
         ]),
         _vm._v(" "),
-        _vm._m(5)
+        _vm._m(6)
       ]
     )
   ])
@@ -64053,7 +64506,7 @@ var staticRenderFns = [
     return _c("div", { staticClass: "column is-2" }, [
       _c("label", [
         _vm._v(
-          "\n                            Commission Admin\n                        "
+          "\n                                Commission Admin\n                            "
         )
       ])
     ])
@@ -64071,7 +64524,7 @@ var staticRenderFns = [
     return _c("div", { staticClass: "column is-2" }, [
       _c("label", [
         _vm._v(
-          "\n                            Commission Currency\n                        "
+          "\n                                Commission Currency\n                            "
         )
       ])
     ])
@@ -64081,6 +64534,18 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "column " }, [_c("strong", [_vm._v("%")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "column is-2" }, [
+      _c("label", [
+        _vm._v(
+          "\n                                Local Currency\n                            "
+        )
+      ])
+    ])
   },
   function() {
     var _vm = this
@@ -64772,11 +65237,19 @@ var render = function() {
     _c("div", { staticClass: "dashboard container" }, [
       _vm._m(0),
       _vm._v(" "),
-      _c("div", { staticClass: "tabcontent", attrs: { id: "cog" } }, [
-        _c("div", { staticClass: "field" }, [_c("Currency")], 1),
-        _vm._v(" "),
-        _c("div", { staticClass: "field" }, [_c("Country")], 1)
-      ]),
+      _c(
+        "div",
+        {
+          staticClass: "tabcontent",
+          staticStyle: { display: "block" },
+          attrs: { id: "cog" }
+        },
+        [
+          _c("div", { staticClass: "field" }, [_c("Currency")], 1),
+          _vm._v(" "),
+          _c("div", { staticClass: "field" }, [_c("Country")], 1)
+        ]
+      ),
       _vm._v(" "),
       _c("div", { staticClass: "tabcontent", attrs: { id: "documents" } }, [
         _vm._v("\n            Members\n        ")
@@ -64902,166 +65375,263 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "columns" }, [
-        _c("strong", { staticClass: "is-size-1" }, [_vm._v("AGENTS")])
-      ]),
-      _vm._v(" "),
-      _c("hr"),
-      _vm._v(" "),
+    return _c("div", { staticClass: "container is-fluid" }, [
       _c("div", { staticClass: "columns agents" }, [
         _c("div", { staticClass: "column" }, [
-          _c("div", { staticClass: "card blocked" }, [
+          _c("div", { staticClass: "card " }, [
             _c("header", { staticClass: "card-header" }, [
-              _c("div", { staticClass: "column" }, [
-                _c("strong", { staticClass: "has-text-danger" }, [
-                  _vm._v("Blocked ")
+              _c("div", {}, [
+                _c("strong", { staticClass: " heading" }, [
+                  _vm._v("Total NO OF Transactions ")
                 ])
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "column" }, [
-                _c("i", { staticClass: "fas fa-users has-text-danger" })
+              _c("div", { staticClass: "column" }),
+              _vm._v(" "),
+              _c("div", {}, [
+                _c("i", { staticClass: "fas fa-exchange-alt is-size-4" }),
+                _vm._v(" "),
+                _c("i", { staticClass: "fas fa-dollar-sign is-size-4" })
               ])
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "card-content" }),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-footer" })
+            _c("div", { staticClass: "card-content" }, [
+              _c("div", { staticClass: "level is-size-3" }, [
+                _c("div", { staticClass: "level-left" }, [_vm._v("42")])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "columns" }, [
+                _c("p", { staticClass: "is-bold" }, [_vm._v("waiting :")]),
+                _vm._v(" "),
+                _c("p", { staticClass: "level-item tag  is-warning" }, [
+                  _vm._v(" 14")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "columns" }, [
+                _c("p", [_vm._v("approved :\n                        ")]),
+                _c("p", { staticClass: "level-item tag  is-success" }, [
+                  _vm._v(" 15")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "columns" }, [
+                _c("p", [_vm._v("paid :\n                        ")]),
+                _c("p", { staticClass: "level-item tag is-light is-success" }, [
+                  _vm._v(" 16")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "columns" }, [
+                _c("p", [_vm._v("cancelled :\n                        ")]),
+                _c("p", { staticClass: "level-item tag  is-danger" }, [
+                  _vm._v(" 17")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "columns" }, [
+                _c("p", [_vm._v("hold :\n                        ")]),
+                _c("p", { staticClass: "level-item tag" }, [_vm._v(" 15")])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "columns" }, [
+                _c("p", [_vm._v("blocked :\n                        ")]),
+                _c("p", { staticClass: "level-item tag is-light is-danger" }, [
+                  _vm._v(" 1")
+                ])
+              ])
+            ])
           ])
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "column" }, [
-          _c("div", { staticClass: "card hold" }, [
+          _c("div", { staticClass: "card " }, [
             _c("header", { staticClass: "card-header" }, [
-              _c("div", { staticClass: "column" }, [
-                _c("strong", [_vm._v("Hold")])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "column" }, [
-                _c("i", { staticClass: "fas fa-users" })
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-content" }),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-footer" })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "column " }, [
-          _c("div", { staticClass: "card approved" }, [
-            _c("header", { staticClass: "card-header" }, [
-              _c("div", { staticClass: "column" }, [
-                _c("strong", { staticClass: "has-text-primary" }, [
-                  _vm._v("Approved")
+              _c("div", { staticClass: " " }, [
+                _c("strong", { staticClass: "heading " }, [
+                  _vm._v("Percentages OF Transactions")
                 ])
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "column" }, [
-                _c("i", { staticClass: "fas fa-users has-text-primary" })
+              _c("div", { staticClass: "column" }),
+              _vm._v(" "),
+              _c("div", {}, [
+                _c("i", { staticClass: "fas fa-exchange-alt is-size-4" }),
+                _vm._v(" "),
+                _c("i", { staticClass: "fas fa-percentage is-size-4" })
               ])
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "card-content" }),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-footer" })
+            _c("div", { staticClass: "card-content" }, [
+              _c("div", { staticClass: "tags " }, [
+                _c("span", { staticClass: "tag heading is-link is-light" }, [
+                  _vm._v("0.8 %")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: " " }, [_vm._v(" down from")]),
+                _vm._v(" "),
+                _c("span", { staticClass: "tag is-success is-light " }, [
+                  _vm._v("  paid ")
+                ]),
+                _vm._v(
+                  "\n                        Transaction\n                    "
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "tags " }, [
+                _c("span", { staticClass: "tag heading is-link is-light" }, [
+                  _vm._v("0.8 %")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: " " }, [_vm._v(" down from")]),
+                _vm._v(" "),
+                _c("span", { staticClass: "tag is-success  " }, [
+                  _vm._v("  approved ")
+                ]),
+                _vm._v(
+                  "\n                        Transaction\n                    "
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "tags " }, [
+                _c("span", { staticClass: "tag heading is-link is-light" }, [
+                  _vm._v("0.8 %")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: " " }, [_vm._v(" down from")]),
+                _vm._v(" "),
+                _c("span", { staticClass: "tag is-danger  " }, [
+                  _vm._v("  cancelled ")
+                ]),
+                _vm._v(
+                  "\n                        Transaction\n                    "
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "tags " }, [
+                _c("span", { staticClass: "tag heading is-link is-light" }, [
+                  _vm._v("0.8 %")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: " " }, [_vm._v(" down from")]),
+                _vm._v(" "),
+                _c("span", { staticClass: "tag   " }, [_vm._v("  hold ")]),
+                _vm._v(
+                  "\n                        Transaction\n                    "
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "tags " }, [
+                _c("span", { staticClass: "tag heading is-link is-light" }, [
+                  _vm._v("0.8 %")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: " " }, [_vm._v(" down from")]),
+                _vm._v(" "),
+                _c("span", { staticClass: "tag is-light  is-danger" }, [
+                  _vm._v("  blocked ")
+                ]),
+                _vm._v(
+                  "\n                        Transaction\n                    "
+                )
+              ])
+            ])
           ])
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "column " }, [
-          _c("div", { staticClass: "card all" }, [
-            _c("header", { staticClass: "card-header" }, [
-              _c("div", { staticClass: "column" }, [
-                _vm._v("\n                            ALL"),
-                _c("i", { staticClass: "fas fa-users" })
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-content" }),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-footer" })
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "columns" }, [
-        _c("strong", { staticClass: "is-size-1" }, [_vm._v("Admins Users")])
-      ]),
-      _vm._v(" "),
-      _c("hr"),
-      _vm._v(" "),
-      _c("div", { staticClass: "columns agents" }, [
-        _c("div", { staticClass: "column" }, [
-          _c("div", { staticClass: "card blocked" }, [
-            _c("header", { staticClass: "card-header" }, [
-              _c("div", { staticClass: "column" }, [
-                _c("strong", { staticClass: "has-text-danger" }, [
-                  _vm._v("Blocked ")
+          _c(
+            "div",
+            { staticClass: "card ", staticStyle: { height: "315px" } },
+            [
+              _c("header", { staticClass: "card-header" }, [
+                _c("div", { staticClass: " " }, [
+                  _c("strong", { staticClass: "heading is-size-5" }, [
+                    _vm._v("Users Admins")
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "column" }),
+                _vm._v(" "),
+                _c("div", {}, [
+                  _c("i", { staticClass: "fas fa-users is-size-4" })
                 ])
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "column" }, [
-                _c("i", { staticClass: "fas fa-users has-text-danger" })
+              _c("div", { staticClass: "card-content" }, [
+                _c("div", { staticClass: "level is-size-2" }, [
+                  _c("div", { staticClass: "level-left" }, [_vm._v("6")])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "columns" }, [
+                  _c("p", [_vm._v("Admins :\n                        ")]),
+                  _c(
+                    "p",
+                    { staticClass: "level-item tag  is-light is-danger" },
+                    [_vm._v(" 1")]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "columns" }, [
+                  _c("p", [_vm._v("users :\n                        ")]),
+                  _c(
+                    "p",
+                    { staticClass: "level-item tag  is-danger is-light" },
+                    [_vm._v(" 5")]
+                  )
+                ])
               ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-content" }),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-footer" })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "column" }, [
-          _c("div", { staticClass: "card hold" }, [
-            _c("header", { staticClass: "card-header" }, [
-              _c("div", { staticClass: "column" }, [
-                _c("strong", [_vm._v("Hold")])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "column" }, [
-                _c("i", { staticClass: "fas fa-users" })
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-content" }),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-footer" })
-          ])
+            ]
+          )
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "column " }, [
-          _c("div", { staticClass: "card approved" }, [
-            _c("header", { staticClass: "card-header" }, [
-              _c("div", { staticClass: "column" }, [
-                _c("strong", { staticClass: "has-text-primary" }, [
-                  _vm._v("Approved")
+          _c(
+            "div",
+            { staticClass: "card ", staticStyle: { height: "315px" } },
+            [
+              _c("header", { staticClass: "card-header" }, [
+                _c("div", { staticClass: " " }, [
+                  _c("strong", { staticClass: "heading is-size-5" }, [
+                    _vm._v("AGENTS")
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "column" }),
+                _vm._v(" "),
+                _c("div", {}, [
+                  _c("i", { staticClass: "fas fa-user-tie is-size-4" })
                 ])
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "column" }, [
-                _c("i", { staticClass: "fas fa-users has-text-primary" })
+              _c("div", { staticClass: "card-content" }, [
+                _c("div", { staticClass: "level is-size-3" }, [
+                  _c("div", { staticClass: "level-left" }, [_vm._v("42")])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "columns" }, [
+                  _c("p", [_vm._v("approved :\n                        ")]),
+                  _c("p", { staticClass: "level-item tag  is-success" }, [
+                    _vm._v(" 15")
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "columns" }, [
+                  _c("p", [_vm._v("hold :\n                        ")]),
+                  _c("p", { staticClass: "level-item tag" }, [_vm._v(" 15")])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "columns" }, [
+                  _c("p", [_vm._v("blocked :\n                        ")]),
+                  _c(
+                    "p",
+                    { staticClass: "level-item tag is-light is-danger" },
+                    [_vm._v(" 1")]
+                  )
+                ])
               ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-content" }),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-footer" })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "column " }, [
-          _c("div", { staticClass: "card all" }, [
-            _c("header", { staticClass: "card-header" }, [
-              _c("div", { staticClass: "column" }, [
-                _vm._v("\n                            ALL"),
-                _c("i", { staticClass: "fas fa-users" })
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-content" }),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-footer" })
-          ])
+            ]
+          )
         ])
       ])
     ])
@@ -65371,7 +65941,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(transaction.convert_price))]),
                 _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(_vm._f("MyDate")(transaction.date)))])
+                _c("td", [_vm._v(_vm._s(_vm._f("myDate")(transaction.date)))])
               ])
             }),
             0
@@ -65494,7 +66064,7 @@ var render = function() {
         _c("table", { staticClass: "table is-fullwidth" }, [
           _c("tbody", [
             _c("tr", [
-              _c("td", [_vm._v("Name Agent Sender")]),
+              _c("td", [_vm._v(" Agent Sender Name")]),
               _vm._v(" "),
               _c("td", [
                 _c("strong", [
@@ -65508,13 +66078,13 @@ var render = function() {
             ]),
             _vm._v(" "),
             _c("tr", [
-              _c("td", [_vm._v("Country Agent Sender")]),
+              _c("td", [_vm._v(" Agent Sender Country")]),
               _vm._v(" "),
               _c("td", [_c("strong", [_vm._v(_vm._s(_vm.country_member))])])
             ]),
             _vm._v(" "),
             _c("tr", [
-              _c("td", [_vm._v("Address Agent Sender")]),
+              _c("td", [_vm._v("Agent Sender Address")]),
               _vm._v(" "),
               _c("td", [_c("strong", [_vm._v(_vm._s(_vm.member.address))])])
             ])
@@ -65531,7 +66101,7 @@ var render = function() {
         on: {
           submit: function($event) {
             $event.preventDefault()
-            return _vm.send_money()
+            return _vm.send_money($event)
           }
         }
       },
@@ -66003,7 +66573,6 @@ var render = function() {
                     attrs: { type: "search" },
                     domProps: { value: _vm.sender_full_name },
                     on: {
-                      keyup: _vm.searchit,
                       input: function($event) {
                         if ($event.target.composing) {
                           return
@@ -66386,7 +66955,6 @@ var render = function() {
                     attrs: { type: "text" },
                     domProps: { value: _vm.receiver_full_name },
                     on: {
-                      keyup: _vm.searchitR,
                       input: function($event) {
                         if ($event.target.composing) {
                           return

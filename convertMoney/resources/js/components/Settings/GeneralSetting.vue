@@ -29,7 +29,7 @@
                     </li>
                 </ul>
             </div>
-            <div id="cog" class="tabcontent">
+            <div id="cog" class="tabcontent" style="display: block">
                 <div class="field">
                     <Currency/>
                 </div>

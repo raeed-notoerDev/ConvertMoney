@@ -12460,9 +12460,18 @@ label.panel-block:hover {
   .print-none {
     display: none !important;
   }
+
+  .logo {
+    display: block !important;
+  }
+
+  .logo-container {
+    display: block !important;
+  }
 }
 
 @page {
   margin: 0;
+  background-image: url("/convertMoney/public/images/1578051142.png");
 }
 

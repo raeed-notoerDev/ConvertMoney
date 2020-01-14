@@ -41,7 +41,10 @@
                         <router-link to="/report">Transaction Reports</router-link>
                     </li>
                     <li>
-                        <router-link to="/search">Receiver Transaction</router-link>
+                        <router-link to="/search">Transaction Receiver</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/history">Transaction History</router-link>
                     </li>
                 </ul>
                 <p class="menu-label has-text-danger">Members Management</p>
@@ -59,7 +62,7 @@
                 <ul class=menu-list>
                     <li>
                         <router-link to="/wallet"><span class="icon is-small"><i
-                                    class="fa fa-bar-chart"></i></span>Agents Accounts
+                                    class="fa fa-bar-chart"></i></span>Agents List
                         </router-link>
                     </li>
                     <li>
@@ -79,6 +82,19 @@
             </nav>
         </aside>
         <main class="column main">
+            <div class="media " style="margin-top: 40px;margin-left: 40px ">
+                <figure class="logo media-left" style="  display: none;">
+                    <div class="image is-128x128">
+                        <img src="/images/1578051142.png"/>
+                    </div>
+                </figure>
+                <div class="media-content logo-container" style="  display: none;">
+                    <div class="content">
+                        <p class="title">Company Name</p>
+                        <p class="subtitle">Description </p>
+                    </div>
+                </div>
+            </div>
             <router-view></router-view>
         </main>
     </div>

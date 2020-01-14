@@ -11,14 +11,14 @@
                 </header>
                 <footer class="card-footer">
                     <div class="card-footer-item">
-                        Wallet : ( {{wallet}} )
+                        ACCOUNT : ( {{account}} ){{currency_current}}
                     </div>
 
                     <div class="card-footer-item">
                         Status :(
                         <span v-if="member.status === 'hold'">
                     <span class=" has-text">
-                        <div class="is-size-5"> </div>HOLD </span>
+                        <div class="is-size-5">HOLD </div> </span>
                   </span>
                         <span v-else-if="member.status === 'block'">
                     <span class=" has-text-danger">
@@ -33,7 +33,7 @@
 
                     </div>
                     <div class="card-footer-item">
-                        Commission : ({{commission}})
+                        Commission : ({{commission}}) %
                     </div>
                 </footer>
             </div>
@@ -155,7 +155,7 @@
                                                placeholder="Zip Code">
                                     </div>
                                     <div class="field">
-                                        <button  type="submit"
+                                        <button type="submit"
                                                 class="button is-outlined is-rounded  is-success ">
                                             Update
                                         </button>
@@ -194,9 +194,22 @@
                 commission: '',
                 nationality: '',
                 zip_code: '',
+                currency_current: "TRY",
+                convert_price: null,
+                account: null
             }
         },
         methods: {
+            async convert() {
+                await axios.get('/api/setting/current_currency').then((data) => this.currency_current = data.data);
+                await axios.get(
+                    "https://free.currconv.com/api/v7/convert?q=USD_" + this.currency_current +
+                    "&compact=ultra&apiKey=301cb83516aa3d45d387").then(response => {
+                        this.convert_price = response.data["USD_" + this.currency_current];
+                        this.account = this.wallet * this.convert_price;
+                    }
+                );
+            },
             async details_member() {
                 await axios.get('/api/member/' + this.code)
                     .then(response => {
@@ -225,7 +238,7 @@
                 if (this.password === '') {
                     this.password = undefined;
                 }
-                axios.patch('/api/profile/'+this.code,
+                axios.patch('/api/profile/' + this.code,
                     {
                         email: this.email,
                         user_name: this.user_name,
@@ -237,7 +250,7 @@
                         nationality: this.nationality,
                         first_name: this.first_name,
                         last_name: this.last_name,
-                        picture:this.picture
+                        picture: this.picture
                     })
                     .then(response => {
                         console.log(response);
@@ -271,6 +284,8 @@
         },
         created() {
             this.details_member();
+
+            this.convert();
         }
     }
 </script>
