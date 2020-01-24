@@ -12463,10 +12463,14 @@ label.panel-block:hover {
 
   .logo {
     display: block !important;
+    margin-top: 40px !important;
+    margin-left: 40px !important;
   }
 
   .logo-container {
     display: block !important;
+    margin-top: 40px !important;
+    margin-left: 40px !important;
   }
 }
 

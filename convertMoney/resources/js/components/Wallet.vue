@@ -1,5 +1,10 @@
 <template>
-    <div class="home">
+    <div class="container-fluid">
+        <div class="level">
+            <div class=""><strong class="is-size-4 level-left"> AGENTS LIST</strong></div>
+            <div class=""><button class="button level-right print-none" @click="printData"><i class="fas fa-print"></i>print</button></div>
+        </div>
+        <hr>
         <div class="table-container">
             <table class="table is-striped is-hoverable is-narrow is-block">
                 <thead>
@@ -92,9 +97,10 @@
             <div class="modal-content" style="margin-top: 200px">
                 <form @submit.prevent="mode_modal ? update_commission():add_wallet()">
                     <div class="card">
-                        <div class="card-header">
-                            <label v-show="mode_modal" class="label">Edit Commission</label>
-                            <label v-show="!mode_modal" class="label">Add Amount For Wallet</label>
+                        <div class="card-header level">
+                            <label v-show="mode_modal" class="label level-left">Edit Commission</label>
+                            <label v-show="!mode_modal" class="label level-left">Add Amount For Account</label>
+                            <div class="button level-right modal-exit"> Close</div>
                         </div>
                         <div class="card-content">
                             <p class="control has-icons-left">
@@ -121,7 +127,7 @@
 
                 </form>
             </div>
-            <button class="modal-close is-large" aria-label="close"></button>
+            <!--            <button class="modal-close is-large" aria-label="close"></button>-->
         </div>
     </div>
 </template>
@@ -141,7 +147,9 @@
             };
         },
         methods: {
-
+            printData(){
+                window.print()
+            },
             update_commission() {
                 axios.patch('api/commission', {
                     commission: this.amount,
@@ -168,7 +176,7 @@
                 })
                     .catch(error => {
                         console.log(error);
-                        swal.fire('wrong', 'this wallet not added ', 'error')
+                        swal.fire('wrong', 'this account not added ', 'info')
                     });
                 const modal = document.getElementById('page-modal');
                 modal.style.display = 'none';
@@ -177,7 +185,7 @@
             addModal(ref_id) {
                 this.agent = ref_id;
                 const modal = document.getElementById('page-modal');
-                const close = document.getElementsByClassName('modal-close')[0];
+                const close = document.getElementsByClassName('modal-exit')[0];
                 modal.style.display = 'block';
                 close.onclick = function closeModal() {
                     modal.style.display = 'none';
@@ -192,7 +200,7 @@
                 this.mode_modal = true;
                 this.amount = member.agent_commission;
                 const modal = document.getElementById('page-modal');
-                const close = document.getElementsByClassName('modal-close')[0];
+                const close = document.getElementsByClassName('modal-exit')[0];
                 modal.style.display = 'block';
                 close.onclick = function closeModal() {
                     modal.style.display = 'none';

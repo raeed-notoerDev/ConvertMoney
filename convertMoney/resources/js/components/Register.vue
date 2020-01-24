@@ -1,5 +1,7 @@
 <template>
     <div class="container">
+        <div class="column"><strong class="is-size-3 level-left"> ADD MEMBER</strong></div>
+        <hr>
         <div class="card">
             <div class="card-content">
                 <p class="subtitle">

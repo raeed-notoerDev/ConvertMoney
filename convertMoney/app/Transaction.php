@@ -21,6 +21,7 @@ class Transaction extends Model
         'destination_country_id',
         'photos',
     ];
+    protected $dates = ['created_at', 'updated_at', 'deleted_at', 'delivered_at'];
 
     public function images()
     {

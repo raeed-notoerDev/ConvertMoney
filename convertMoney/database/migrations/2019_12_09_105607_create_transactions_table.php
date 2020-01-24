@@ -30,6 +30,7 @@ class CreateTransactionsTable extends Migration
             $table->string('sender_beneficiary_id');
             $table->string('receiver_beneficiary_id');
             $table->string('photos')->nullable();
+            $table->date('delivered_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

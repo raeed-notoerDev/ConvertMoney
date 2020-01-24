@@ -202,4 +202,59 @@ class SettingController extends Controller
 
     }
 
+    public function getDataHeader()
+    {
+        return response()->json([
+            'logo' => Setting::where('key', 'logo')->first()['value'],
+            'company_name' => Setting::where('key', 'company_name')->first()['value'],
+            'description' => Setting::where('key', 'description')->first()['value'],
+        ]);
+    }
+
+    public function updateHeaderData(Request $request)
+    {
+//        try {
+
+            $validator = Validator::make($request->all(), [
+                'company_name' => 'string',
+                'description' => 'string',
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => $validator->errors()
+                ]);
+            }
+        $company_name = Setting::where('key', 'company_name')->first()['value'];
+        $description = Setting::where('key', 'description')->first();
+        $currentPhoto = Setting::where('key', 'logo')->first()['value'];
+
+        if ($request->logo != $currentPhoto && $request->logo != "") {
+            $name = time() . '.' . explode('/', explode(':', substr($request->logo, 0, strpos($request->logo, ';')))[1])[1];
+            \Image::make($request->logo)->save(public_path('img/profile/') . $name);
+            $request->merge(['logo' => $name]);
+            $userPhoto = public_path('img/profile/') . $currentPhoto;
+            if (file_exists($userPhoto)) {
+                @unlink($userPhoto);
+            }
+            Setting::where('key', 'logo')->update([
+                'value' => $request['logo']
+            ]);
+        }
+        if ($request->company_name != $company_name) {
+
+            Setting::where('key', 'company_name')->update([
+                'value' => $request->company_name,
+            ]);
+        }
+        if ($request->description != $description->value) {
+            $description->update([
+                'value' => $request->description
+            ]);
+        }
+        return response()->json([
+            'status' => true,
+            'message' => 'Settings Updated Successfully :)'
+        ]);
+    }
 }

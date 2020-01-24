@@ -1,5 +1,11 @@
 <template>
-    <div class="home">
+    <div class="container-fluid">
+        <div class="level">
+            <strong class="is-size-3 level-left"> MEMBERS</strong>
+            <button class="button level-right print-none" @click="printData"><i class="fas fa-print"></i>print</button>
+        </div>
+
+        <hr>
         <div class="table-container">
             <table class="table is-striped is-hoverable is-narrow is-block">
                 <thead>
@@ -28,7 +34,7 @@
                         >
                             {{ member.ref_id }}
                         </router-link>
-                       </td>
+                    </td>
                     <td>{{ member.first_name }}</td>
                     <td>{{ member.last_name }}</td>
                     <td>{{ member.gender }}</td>
@@ -103,6 +109,9 @@
             };
         },
         methods: {
+            printData() {
+                window.print()
+            },
             async get_membrs() {
                 await axios
                     .get('api/member')

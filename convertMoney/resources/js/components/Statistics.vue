@@ -1,5 +1,6 @@
 <template>
     <div class="container is-fluid">
+        <div class="column"><strong class="is-size-5 level-left"> DASHBOARD</strong></div>
         <div class="columns agents">
             <div class="column">
                 <div class="card ">
@@ -115,7 +116,7 @@
                         <div class="level is-size-3">
                             <div class="level-left">42</div>
                         </div>
-                        
+
                         <div class="columns"><p>approved :
                             <p class="level-item tag  is-success"> 15</p></div>
 

@@ -1,5 +1,20 @@
 <template>
-    <div class="home">
+    <div class="container-fluid">
+        <div class="level">
+            <div class="column"><strong class="is-size-3 level-left"> Transaction Reports</strong></div>
+            <div class="level-right print-none">
+                <!--            <export-excel-->
+                <!--                class="button column is-1 is-small is-outlined is-fullwidth is-size-6   "-->
+                <!--                :data="transactions">-->
+                <!--                <i class="fas fa-file-excel"> </i> Excel-->
+                <!--            </export-excel>-->
+                <div class=" button    is-fullwidth " @click="someJSONdata">
+                    <i class="fas fa-print"></i> Print
+                </div>
+            </div>
+        </div>
+
+        <hr>
         <div class="columns">
             <div class="column">
                 <label>Date From</label>
@@ -58,16 +73,7 @@
                 </button>
             </div>
         </div>
-        <div class="columns print-none">
-            <export-excel
-                class="button column is-1 is-small is-outlined is-fullwidth is-size-6   "
-                :data="transactions">
-                <i class="fas fa-file-excel"> </i> Excel
-            </export-excel>
-            <div class="column is-1 button  is-small is-outlined is-fullwidth is-size-6" @click="someJSONdata">
-                <i class="fas fa-print"></i> Print Data
-            </div>
-        </div>
+
         <div class="table-container">
 
 
@@ -123,14 +129,19 @@
                 <i class="">APPROVED</i>
               </span>
                     </td>
-                    <td v-else-if="transaction.status === 'received'">
+                    <td v-else-if="transaction.status === 'paid'">
               <span class=" has-text-success">
-                <i class="">RECEIVED</i>
+                <i class="">PAIDOUT</i>
               </span>
                     </td>
                     <td v-else-if="transaction.status === 'cancelled'">
               <span class="has-text-danger">
                 <i class="" style="background-color: #f14668"></i>CANCELLED
+              </span>
+                    </td>
+                    <td v-else-if="transaction.status === 'waiting'">
+              <span class="has-text-warning">
+                <i class="" style="background-color: #f14668"></i>WAITED
               </span>
                     </td>
                     <td>{{ transaction.agent_sender }}</td>

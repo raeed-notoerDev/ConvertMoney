@@ -45,14 +45,14 @@ class TransactionController extends Controller
             $transaction_data = DB::table('users')
                 ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
                 ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                ->select('transactions.*', 'countries.*')
+                ->select('transactions.*', 'countries.name')
                 ->where('transactions.code', $code)
                 ->get();
             if ($transaction_data) {
                 return response()->json([
                     'transaction' => $this->list_transaction($transaction_data),
                     'images' => Image::where('transaction_id', $code)->get(),
-                    'receiver_id' => $transaction_data[0]->agent_id_sender
+                    'receiver_id' => $transaction_data[0]->agent_id_sender,
                 ]);
             } else {
                 return response()->json([
@@ -71,7 +71,7 @@ class TransactionController extends Controller
             $transaction_data = DB::table('users')
                 ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
                 ->join('countries', 'transactions.destination_country_id', '=', 'countries.id')
-                ->select('transactions.*', 'countries.*')
+                ->select('transactions.*', 'countries.name')
                 ->where('transactions.code', $code)
                 ->first();
 
@@ -262,7 +262,7 @@ class TransactionController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => $validator->errors()
-                ],401);
+                ], 401);
             }
             if (auth('api')->user()->wallet > 0 && auth('api')->user()->wallet > floatval($input['total_money'])) {
                 $result_sender = auth('api')->user()->wallet - (floatval($input['total_money']) - floatval($input['commission']));
@@ -299,13 +299,13 @@ class TransactionController extends Controller
                         'sender_beneficiary_id' => $senderBeneficiary->id_number,
                         'receiver_beneficiary_id' => $receiverBeneficiary->id_number,
                         'commission' => $input['commission'],
-                        'receiver_country_id' => Country::where('id', $input['country_id'])->first()['name'],
+                        'destination_country_id' => Country::where('name', $input['country_id'])->first()['id'],
                         'currency_receiver_id' => $input['currency_receiver_id'],
                         'currency_sender_id' => $input['currency_sender_id'],
-                        'status' => 'hold',
+                        'status' => 'waiting',
                         'convert_price' => $input['convert_price'],
                         'agent_id_sender' => auth('api')->user()->ref_id,
-                        'destination_country_id' => $input['country_id'],
+                        'receiver_country_id' => $input['country_id'],
                         'photos' => 'photo'
                     ]);
                     $last_wallet = Wallet::where('member_id', auth('api')->user()->ref_id)->orderBy('created_at', 'desc')->first();
@@ -313,7 +313,7 @@ class TransactionController extends Controller
                         'calculate' => true
                     ]);
                     Wallet::create([
-                        'amount_minis' =>($last_wallet->amount - $result_sender) ,
+                        'amount_minis' => ($last_wallet->amount - $result_sender),
                         'member_id' => auth('api')->user()->ref_id,
                         'amount' => $result_sender,
                         'uuid' => uniqid()
@@ -330,13 +330,13 @@ class TransactionController extends Controller
                     return response()->json([
                         'status' => false,
                         'message' => '  Not enough money in your account'
-                    ],401);
+                    ], 401);
                 }
             } else {
                 return response()->json([
                     'status' => false,
                     'message' => 'you dont have Money in your account'
-                ],401);
+                ], 401);
             }
         } catch (\Exception $exception) {
             error_log($exception->getMessage());
@@ -354,6 +354,7 @@ class TransactionController extends Controller
                     'total_money' => $transactions[$i]->total_money,
                     'name_sender' => Beneficiary::where('id_number', $transactions[$i]->sender_beneficiary_id)->first()['full_name'],
                     'name_receiver' => Beneficiary::where('id_number', $transactions[$i]->receiver_beneficiary_id)->first()['full_name'],
+                    'code_receiver' => $transactions[$i]->receiver_beneficiary_id,
                     'tax' => $transactions[$i]->tax,
                     'commission' => $transactions[$i]->commission,
                     'currency_sender' => $transactions[$i]->currency_sender_id,
@@ -363,7 +364,10 @@ class TransactionController extends Controller
                     'city_destination' => $transactions[$i]->name,
                     'status' => $transactions[$i]->status,
                     'date' => $transactions[$i]->created_at,
-                    'convert_price' => $transactions[$i]->convert_price
+                    'convert_price' => $transactions[$i]->convert_price,
+                    'delivered_at' => $transactions[$i]->delivered_at,
+                    'country_from' => Country::where('id', User::where('ref_id', $transactions[$i]->agent_id_sender)->first()['country_id'])->first()['name']
+
                 ]);
             }
 
@@ -391,17 +395,23 @@ class TransactionController extends Controller
                 'name_receiver' => Beneficiary::where('id_number', $transactions->receiver_beneficiary_id)->first()['full_name'],
                 'phone_number_receiver' => Beneficiary::where('id_number', $transactions->receiver_beneficiary_id)->first()['phone_number'],
                 'receiver_full_name' => Beneficiary::where('id_number', $transactions->receiver_beneficiary_id)->first()['full_name'],
+                'receiver_address' => Beneficiary::where('id_number', $transactions->receiver_beneficiary_id)->first()['address'],
                 'tax' => $transactions->tax,
                 'commission' => $transactions->commission,
                 'currency_sender' => $transactions->currency_sender_id,
                 'currency_receiver' => $transactions->currency_receiver_id,
                 'agent_sender' => User::where('ref_id', $transactions->agent_id_sender)->first()['first_name'] . '   ' . User::where('ref_id', $transactions->agent_id_sender)->first()['last_name'],
-                'receiver_money' => ($transactions->total_money - ($transactions->total_money * ((User::where('ref_id', $transactions->agent_id_sender)->first()['agent_commission']) + (User::where('ref_id', auth('api')->user()->ref_id)->first()['agent_commission'])) / 100)),
+                'code_agent_sender' => $transactions->agent_id_sender,
+                'country_agent_sender' => Country::where('id', User::where('ref_id', $transactions->agent_id_sender)->first()['country_id'])->first()['name'],
+//                'receiver_money' => ($transactions->total_money - ($transactions->total_money * ((User::where('ref_id', $transactions->agent_id_sender)->first()['agent_commission']) + (User::where('ref_id', auth('api')->user()->ref_id)->first()['agent_commission'])) / 100)),
+                'receiver_money' => ($transactions->total_money - ($transactions->total_money * ((User::where('ref_id', $transactions->agent_id_sender)->first()['agent_commission']) + (User::where('ref_id', auth('api')->user()->ref_id)->first()['agent_commission'])) / 100)) * $transactions->convert_price,
 //              'agent_receiver' => User::where('ref_id', $transactions->agent_id_receiver)->first()['first_name'] . '   ' . User::where('ref_id', $transactions->agent_id_receiver)->first()['last_name'],
                 'city_destination' => $transactions->name,
                 'status' => $transactions->status,
                 'date' => $transactions->created_at,
+                'delivered_at' => $transactions->delivered_at,
                 'convert_price' => $transactions->convert_price,
+                'code_receiver' => $transactions->receiver_beneficiary_id,
             ];
             return $myArray;
         } catch (\Exception $exception) {
@@ -422,7 +432,7 @@ class TransactionController extends Controller
                 ]);
             }
             $transaction = Transaction::where('code', $request['code'])
-                ->where('status', '<>', 'received')
+                ->where('status', '<>', 'paid')
                 ->first();
             $transaction->update([
                 'status' => 'blocked'
@@ -463,7 +473,7 @@ class TransactionController extends Controller
             ]);
         }
         $transaction = Transaction::where('code', $request['code'])
-            ->where('status', '<>', 'received')
+            ->where('status', '<>', 'paid')
             ->first();
         $transaction->update([
             'status' => 'approved'

@@ -3,9 +3,9 @@
 
         <nav class="navbar" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
-                <a class="navbar-item" href="https://bulma.io">
-                    <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
-                </a>
+                <div class=" image is-64x64" >
+                    <img :src="pathPhoto()"/>
+                </div>
 
                 <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
                    data-target="navbarBasicExample">
@@ -75,25 +75,59 @@
                 </div>
             </div>
         </nav>
+        <div class="media ">
+            <figure class="logo media-left" style="  display: none;">
+                <div class="image is-128x128">
+                    <img :src="pathPhoto()"/>
 
+                </div>
+            </figure>
+            <div class="media-content logo-container" style="  display: none;">
+                <div class="content">
+                    <p class="title">{{company_name}}</p>
+                    <p class="subtitle">{{description}} </p>
+                </div>
+            </div>
+        </div>
+        <br>
     </div>
 </template>
 
 <script>
+    import axios from 'axios';
+
     export default {
         data() {
-            return {}
+            return {
+                headerData: {},
+                logo: "",
+                company_name: "",
+                description: ""
+            }
         },
         created() {
 
         },
         methods: {
+            selectDataHerder() {
+                axios.get('api/setting-header').then(response => {
+                    this.headerData = response.data;
+                    this.company_name = response.data.company_name;
+                    this.description = response.data.description;
+
+                })
+            },
+            pathPhoto() {
+                return (this.logo.length > 200) ? this.logo : "../img/profile/" + this.headerData.logo;
+            },
             back() {
                 this.$router.go(-1)
             },
             logout() {
                 axios.post('/logout').then(window.location = '/login');
             }
+        }, created() {
+            this.selectDataHerder();
         }
     }
 </script>

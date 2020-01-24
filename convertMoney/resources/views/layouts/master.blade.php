@@ -20,59 +20,59 @@
 <div class=wrapper id="app">
     <header-component></header-component>
     <div class=columns>
-        <aside class="column is-2 aside has-background-light">
+        <aside class="column is-2 aside has-background-light" style="margin: 12px">
             <nav class=menu><p class=menu-label>General</p>
                 <ul class=menu-list>
                     <li>
-                        <router-link to="/home" class=is-active><span class="icon is-small"><i
+                        <router-link to="/home" class="page " onclick="sideBar(event)"><span class="icon is-small"><i
                                     class="fas fa-tachometer-alt"></i></span>
                             Dashboard
                         </router-link>
                     </li>
                 </ul>
-                <p class="menu-label has-text-success">Transaction Management</p>
+                <p class="menu-label has-text-white has-background-success">Transaction Management</p>
                 <ul class=menu-list>
                     <li>
-                        <router-link to="/transaction"><span class="icon is-small">
+                        <router-link onclick="sideBar(event)" to="/transaction" class="page has-text-success"><span class="icon is-small">
                                 <i class="fas fa-paper-plane"></i></span> Send Money
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/report">Transaction Reports</router-link>
+                        <router-link  to="/report" class="page has-text-success"  onclick="sideBar(event)">Transaction Reports</router-link>
                     </li>
                     <li>
-                        <router-link to="/search">Transaction Receiver</router-link>
+                        <router-link to="/search" class="page has-text-success"  onclick="sideBar(event)">Transaction Receiver</router-link>
                     </li>
                     <li>
-                        <router-link to="/history">Transaction History</router-link>
+                        <router-link to="/history" class="page has-text-success"  onclick="sideBar(event)">Transaction History</router-link>
                     </li>
                 </ul>
-                <p class="menu-label has-text-danger">Members Management</p>
+                <p class="menu-label has-background-danger has-text-white">Members Management</p>
                 <ul class=menu-list>
                     <li>
-                        <router-link to="/register"><span class="icon is-small"><i
+                        <router-link to="/register" class="page has-text-danger"  onclick="sideBar(event)"><span class="icon is-small"><i
                                     class="fa fa-bar-chart"></i></span> Add Members
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/member">Members</router-link>
+                        <router-link to="/member" class="page has-text-danger"  onclick="sideBar(event)">Members</router-link>
                     </li>
                 </ul>
-                <p class="menu-label has-text-info"> Finance Management</p>
+                <p class="menu-label has-background-grey has-text-white"> Finance Management</p>
                 <ul class=menu-list>
                     <li>
-                        <router-link to="/wallet"><span class="icon is-small"><i
+                        <router-link to="/wallet" class="page has-text-grey"  onclick="sideBar(event)"><span class="icon is-small"><i
                                     class="fa fa-bar-chart"></i></span>Agents List
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/report_f"> Finances Reports</router-link>
+                        <router-link to="/report_f" class="page has-text-grey"  onclick="sideBar(event)"> Finances Reports</router-link>
                     </li>
                 </ul>
-                <p class="menu-label has-text-primary"> Settings </p>
+                <p class="menu-label has-background-primary"> Settings </p>
                 <ul class=menu-list>
                     <li>
-                        <router-link to="/setting"><span class="icon is-small"><i
+                        <router-link to="/setting" class="page has-text-primary"  onclick="sideBar(event)"><span class="icon is-small"><i
                                     class="fa fa-bar-chart"></i></span>General
                         </router-link>
                     </li>
@@ -82,19 +82,7 @@
             </nav>
         </aside>
         <main class="column main">
-            <div class="media " style="margin-top: 40px;margin-left: 40px ">
-                <figure class="logo media-left" style="  display: none;">
-                    <div class="image is-128x128">
-                        <img src="/images/1578051142.png"/>
-                    </div>
-                </figure>
-                <div class="media-content logo-container" style="  display: none;">
-                    <div class="content">
-                        <p class="title">Company Name</p>
-                        <p class="subtitle">Description </p>
-                    </div>
-                </div>
-            </div>
+
             <router-view></router-view>
         </main>
     </div>
@@ -173,6 +161,19 @@
         document.getElementById(tabId).style.display = 'block';
         event.currentTarget.className += " is-active";
 
+    }
+    function sideBar(event) {
+        // Get all element with class tablinks and remove class is-active
+        page = document.getElementsByClassName("page");
+
+        // for (i = 0; i < page.length; i++) {
+        //     page[i].className = page[i].className.replace("is-active", "");
+        //     page[i].className = page[i].className.replace("page", "");
+        // }
+        event.currentTarget.className = event.currentTarget.className.replace("is-active", "");
+        event.currentTarget.className = event.currentTarget.className.replace("has-text", "");
+        console.log(event.currentTarget.className);
+        event.currentTarget.className += " is-active";
     }
 
 

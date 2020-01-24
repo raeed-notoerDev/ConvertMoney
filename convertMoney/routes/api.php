@@ -76,5 +76,7 @@ Route::group([
     //settings
     Route::patch('/setting-commission', 'API\SettingController@commission_update');
     Route::get('/setting/{key}', 'API\SettingController@show');
+    Route::get('/setting-header', 'API\SettingController@getDataHeader');
+    Route::patch('/setting-header', 'API\SettingController@updateHeaderData');
 });
 

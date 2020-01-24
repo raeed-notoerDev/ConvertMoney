@@ -1,6 +1,8 @@
 <template>
     <div id="master">
-        <div class="dashboard container">
+        <div class="dashboard container-fluid">
+            <div class="column"><strong class="is-size-5 level-left"> SETTINGS</strong></div>
+            <hr>
             <div class="tabs is-toggle is-toggle-rounded is-centered">
                 <ul>
                     <li class="tablinks is-active" onclick="openTab(event,'cog')">
@@ -36,6 +38,9 @@
                 <div class="field">
                     <Country/>
                 </div>
+                <div class="field">
+                    <DataHeader/>
+                </div>
             </div>
             <div id="documents" class="tabcontent">
                 Members
@@ -57,6 +62,7 @@
     import Country from "./Country.vue";
     import Currency from "./Currency.vue";
     import Commission from "./Commission.vue";
+    import DataHeader from "./DataHeader.vue";
     import axios from 'axios';
 
     export default {
@@ -72,7 +78,8 @@
         components: {
             Country,
             Currency,
-            Commission
+            Commission,
+            DataHeader
         },
         methods: {
             addCurrency() {

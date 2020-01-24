@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Member;
 use App\Transaction;
 use App\User;
+use App\Wallet;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -260,9 +262,9 @@ class MembersController extends Controller
 
     public function receiver_transaction(Request $request)
     {
+//        error_log($request['code']);
         $validator = Validator::make($request->all(), [
             'code' => 'required|exists:transactions,code',
-            'status' => 'required'
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -271,27 +273,61 @@ class MembersController extends Controller
             ]);
         }
         $input = $request->all();
-        $transaction = Transaction::where('code', $input['code'])->where('status', '<>', 'received')->first();
+        $transaction = Transaction::where('code', $input['code'])->where('status', '<>', 'paid')->first();
         if ($transaction) {
-            $receiverBeneficiary = Beneficiary::where('phone_number', $input['receiver_phone_number'])->first();
-            $receiverBeneficiary->update([
-                'address' => $input['receiver_address'],
-                'id_number' => $input['receiver_id_number'],
-                'passport_number' => $input['receiver_passport_number'],
-                'birthday' => $input['receiver_birthday'],
-                'nationality' => $input['receiver_nationality'],
-                'gender' => $input['receiver_gender'],
-                'profession' => $input['receiver_profession']
-            ]);
-            $transaction->update([
-                'status' => 'paid',
-                'receiver_agent_id' => auth('api')->user()->ref_id,
-            ]);
+//            $exchange_rate = "https://free.currconv.com/api/v7/convert?q=USD_" . $transaction->currency_receiver_id . "&compact=ultra&apiKey=301cb83516aa3d45d387";
+//            $ch = curl_init();
+//            curl_setopt($ch, CURLOPT_URL, $exchange_rate);
+//            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+//            $return = curl_exec($ch);
+//            curl_close($ch);
+//            $exchange_rate = json_decode($return, TRUE);
+            if ($transaction->convert_price > 1)
+                $wallet = (auth('api')->user()->wallet * $transaction->convert_price);
+            else
+                $wallet = (auth('api')->user()->wallet / $transaction->convert_price);
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Transaction complete'
-            ]);
+            if (auth('api')->user()->wallet > 0 && $wallet > floatval($input['total_money'])) {
+                $receiverBeneficiary = Beneficiary::where('id_number', $input['code_receiver'])->first();
+                error_log($receiverBeneficiary);
+                $receiverBeneficiary->update([
+                    'address' => $input['receiver_address'],
+                    'phone_number' => $input['receiver_phone_number'],
+                    'passport_number' => $input['receiver_passport_number'],
+                    'birthday' => $input['receiver_birthday'],
+                    'nationality' => $input['receiver_nationality'],
+                    'gender' => $input['receiver_gender'],
+                    'profession' => $input['receiver_profession']
+                ]);
+                $transaction->update([
+                    'status' => 'paid',
+                    'receiver_agent_id' => auth('api')->user()->ref_id,
+                    'delivered_at' => Carbon::now(),
+                ]);
+                $last_wallet = Wallet::where('member_id', auth('api')->user()->ref_id)->orderBy('created_at', 'desc')->first();
+                $last_wallet->update([
+                    'calculate' => true
+                ]);
+                Wallet::create([
+                    'amount_plus' => floatval($input['total_money']) / $transaction->convert_price,
+                    'member_id' => auth('api')->user()->ref_id,
+                    'amount' => ($last_wallet->amount + floatval($input['total_money']) / $transaction->convert_price),
+                    'uuid' => uniqid()
+                ]);
+//                    auth('api')->user()->calculate_expense($last_wallet->amount, $result_sender);
+                User::where('ref_id', auth('api')->user()->ref_id)->update([
+                    'wallet' => ($last_wallet->amount + floatval($input['total_money']) / $transaction->convert_price)
+                ]);
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Transaction PAIDOUT'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'you dont have Money in your account'
+                ], 401);
+            }
         } else {
             return response()->json([
                 'message' => 'Transaction not Found'

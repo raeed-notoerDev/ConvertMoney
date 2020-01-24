@@ -1,6 +1,6 @@
 <template>
     <div class="TransferMoney container is-fluid">
-        <div class="column"><strong class="is-size-3"> Transfer Money</strong></div>
+        <div class="column"><strong class="is-size-3 level-left"> SEND MONEY</strong></div>
         <hr>
         <div class="  is-centered is-fullwidth">
             <ul>
@@ -127,8 +127,9 @@
                                         v-for="country in countries"
                                         :key="country.id"
                                         :id="country.id"
-                                        :value="country.id"
+                                        :value="country.name"
                                     >
+
                                         {{ country.name }}
                                     </option>
                                 </select>
@@ -530,6 +531,11 @@
                                 disabled
                             />
                         </div>
+                        <br>
+                        <div class="columns consumer level">
+                            <div class="level-left"> Country</div>
+                            <div class="level-item"><strong> {{country_id}}</strong></div>
+                        </div>
                     </div>
                 </div>
 
@@ -589,7 +595,7 @@
                 member: {},
                 country_member: "",
                 images: [],
-                show_img: false,
+                show_img : false,
                 route: false,
                 total_money: "",
                 currency_receiver_id: "USD",
@@ -605,7 +611,7 @@
                 sender_nationality: null,
                 currencies: [],
                 countries: [],
-                country_id: 1,
+                country_id: 'Turkey',
                 convert_price: "",
                 commission: "",
                 address: "",
@@ -758,7 +764,7 @@
                     this.currency_sender_id +
                     "_" +
                     this.currency_receiver_id +
-                    "&compact=ultra&apiKey=301cb83516aa3d45d387").then(response =>
+                        "&compact=ultra&apiKey=301cb83516aa3d45d387").then(response =>
                     (this.convert_price =
                         response.data[this.currency_sender_id + "_" + this.currency_receiver_id])
                 );

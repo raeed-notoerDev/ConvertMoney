@@ -9,7 +9,7 @@
                                 <div class="column">
                                 <span>
                                   <br/>
-                                    Date :<strong>{{ transaction.date | MyDate }}</strong>
+                                    Date :<strong>{{ transaction.date }}</strong>
                                 </span>
                                 </div>
                                 <br/>
@@ -19,13 +19,15 @@
                                 <div class="column">
                                     <br/>
                                     <div class="columns print-none">
-                                        <export-excel
-                                            class="button column  is-small is-outlined is-fullwidth is-size-6"
-                                            :data="transfer">
-                                            <i class="fas fa-file-excel"></i>
-                                            Excel
-                                        </export-excel>
-                                        <div class="button column is-small is-outlined is-fullwidth is-size-6"
+<!--                                        <export-excel-->
+<!--                                            class="button column  is-small is-outlined is-fullwidth is-size-6"-->
+<!--                                            :data="transfer">-->
+<!--                                            <i class="fas fa-file-excel"></i>-->
+<!--                                            Excel-->
+<!--                                        </export-excel>-->
+                                        <div class="column"></div>
+                                        <div class="column"></div>
+                                        <div class="button column  is-outlined  is-size-6"
                                              @click.prevent="someJSONdata">
                                             <i class="fas fa-print"> </i>Print Data
                                         </div>
@@ -45,10 +47,14 @@
                                           <i class="">APPROVED</i>
                                         </span>
                                       </span>
-                                      <span v-else-if="transaction.status === 'received'">
+                                      <span v-else-if="transaction.status === 'paid'">
                                         <span class=" has-text-success">
-                                          <i class="">RECEIVED</i>
+                                          <i class="">PAIDOUT</i>
                                         </span>
+                                          <div class="button is-static is-outlined is-rounded is-success ">
+                                              <div class="is-size-4">Delivered On:	&nbsp;</div><br>
+                                               <strong class="">{{transaction.delivered_at}}</strong>
+                                          </div>
                                       </span>
                                       <span v-else-if="transaction.status === 'cancelled'">
                                         <span class="has-text-danger">
@@ -124,7 +130,7 @@
                             </div>
                         </div>
                     </div>
-                    <footer class="card-footer print-none">
+                    <footer class="card-footer print-none" v-if="transaction.status!=='paid'">
                         <a class=" is-danger card-footer-item" @click="blocked_transaction">
                             <span class="has-text-danger">Block</span>
                         </a>
@@ -132,6 +138,15 @@
                         > <span class="has-text-success">Approve</span></a
                         >
                         <a class=" is-link card-footer-item">Cancel</a>
+                    </footer>
+                    <footer class="card-footer print-none" v-else-if="transaction.status==='paid'">
+                        <div class=" is-static  card-footer-item" >
+                            <span class="has-text-grey">Block</span>
+                        </div>
+                        <div class="  card-footer-item"
+                        > <span class="has-text-grey">Approve</span></div
+                        >
+                        <div class="  card-footer-item has-text-grey">Cancel</div>
                     </footer>
                 </div>
             </div>

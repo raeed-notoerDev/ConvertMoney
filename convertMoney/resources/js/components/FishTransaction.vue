@@ -23,7 +23,7 @@
                         Amount
                     </td>
                     <td>
-                        {{calcTotal}} ({{ currency_sender_id }})
+                        {{calcTotal}} (<strong>{{ currency_sender_id }}</strong>)
                     </td>
                 </tr>
                 <tr>
@@ -31,25 +31,29 @@
                         Commission
                     </td>
                     <td>
-                        {{ commission }} {{ currency_sender_id }}
+                        {{ commission }} <strong>{{ currency_sender_id }}</strong>
                     </td>
                 </tr>
                 <tr>
                     <td>Tax</td>
-                    <td>0 {{ currency_sender_id }}</td>
+                    <td>0<strong> {{ currency_sender_id }}</strong></td>
                 </tr>
                 <tr>
                     <td>Total Amount Paid</td>
-                    <td>{{ totalAmount }} {{ currency_sender_id }}</td>
+                    <td>{{ totalAmount + commission}} <strong>{{ currency_sender_id }}</strong></td>
                 </tr>
                 <tr>
                     <td>Exchange Rate</td>
-                    <td>20 {{ currency_sender_id }} = 100 {{currency_receiver_id}} <br>(1 {{ currency_sender_id }} = {{convert_price}} {{currency_receiver_id}})</td>
+                    <td>
+                        {{ totalAmount }} <strong>{{ currency_sender_id }}</strong> = {{calcTotal * convert_price}}
+                        <strong> {{currency_receiver_id}} </strong><br>
+                        (1 <strong>{{ currency_sender_id }}</strong> = {{convert_price}} <strong>{{currency_receiver_id}}</strong>)
+                    </td>
                 </tr>
 
                 <tr class="has-background-grey-lighter">
-                    <td>Total Amount Send</td>
-                    <td> 100  {{currency_receiver_id}}</td>
+                    <td>Total Amount Sent</td>
+                    <td><strong>{{calcTotal * convert_price }} {{currency_receiver_id}}</strong></td>
                 </tr>
                 </tbody>
             </table>
@@ -60,25 +64,32 @@
             <table class="table agent">
                 <tbody>
                 <tr>
-                    <td>PCN<br>MNALKFO32</td>
+                    <td>ACN<br>
+                        <strong>{{transfer.code_agent_sender}}</strong>
+                    </td>
                     <td>Agent Name<br>
-                        MUHAMMED RAID CUMA
+                        <strong>{{transfer.agent_sender}}</strong>
                     </td>
                 </tr>
                 <tr>
                     <td>Transaction Status<br>
-                        <strong class="has-text-success">APPROVED</strong>
+                        <strong v-if="transfer.status==='blocked'" class="has-text-danger">BLOCK</strong>
+                        <strong v-if="transfer.status==='canceled'" class="has-text-danger">CANCEL</strong>
+                        <strong v-if="transfer.status==='approved'" class="has-text-success">APPROVED</strong>
+                        <strong v-if="transfer.status==='paid'" class="has-text-primary">PAID</strong>
+                        <strong v-if="transfer.status==='waiting'" class="has-text-warning">WAITE</strong>
+                        <strong v-if="transfer.status==='hold'">HOLD</strong>
                     </td>
                     <td>Transaction Date<br>
-                        11/1/2020
+                        <strong>{{transfer.date }}</strong>
                     </td>
                 </tr>
                 <tr>
                     <td>Sending Country<br>
-                        Turkey
+                        <strong> {{transfer.country_agent_sender}}</strong>
                     </td>
                     <td>Receiving Country<br>
-                        IRAQ
+                        <strong>{{transfer.city_destination}}</strong>
                     </td>
                 </tr>
                 </tbody>
@@ -92,44 +103,40 @@
                 <tbody>
                 <tr>
                     <td>Sender Name</td>
-                    <td>Muhammed</td>
-                </tr>
-                <tr>
-                    <td>Sender Country</td>
-                    <td>Turkey</td>
+                    <td><strong>{{transfer.name_sender}}</strong></td>
                 </tr>
                 <tr>
                     <td>Sender Address</td>
-                    <td>Turkey Istanbul Esen Sher mh D:1/3</td>
+                    <td><strong>{{transfer.address_sender}}</strong></td>
                 </tr>
                 <tr>
                     <td>Sender Phone</td>
-                    <td>+90 534 773 95 76</td>
+                    <td><strong>{{transfer.phone_number_sender}}</strong></td>
                 </tr>
                 </tbody>
             </table>
         </div>
         <br>
-        <div class=""><strong class="is-size-4"> BENEFICIARY Details</strong></div>
+        <div class=""><strong class="is-size-4"> BENEFICIARY DETAILS</strong></div>
         <hr>
         <div class="columns">
             <table class="table">
                 <tbody>
                 <tr>
                     <td>Beneficiary Name</td>
-                    <td>EYMEN</td>
+                    <td><strong>{{receiver_full_name}}</strong></td>
                 </tr>
                 <tr>
                     <td>Beneficiary Country</td>
-                    <td>IRAQ</td>
+                    <td><strong>{{transfer.city_destination}}</strong></td>
                 </tr>
                 <tr>
                     <td>Beneficiary Address</td>
-                    <td>IRAQ BAGHDAD SUL H:1/3</td>
+                    <td><strong>{{transfer.receiver_address}}</strong></td>
                 </tr>
                 <tr>
                     <td>Beneficiary Phone</td>
-                    <td>+90 534 773 95 76</td>
+                    <td><strong>{{transfer.phone_number_receiver}}</strong></td>
                 </tr>
                 </tbody>
             </table>
@@ -150,9 +157,11 @@
 
 <script>
     import axios from "axios";
+    import SearchTransaction from "./SearchTransaction";
 
     export default {
         name: "FishTransaction",
+        components: {SearchTransaction},
         data() {
             return {
                 code: this.$route.params.code,
@@ -170,7 +179,7 @@
         },
         methods: {
             getTransactionPhoto(picture) {
-                return "/images/" + picture;
+                return "/storage/images/" + picture;
             },
             async details_transaction() {
                 console.log(this.$route.params.code);
@@ -183,7 +192,6 @@
                         this.currency_receiver_id = response.data.transaction.currency_receiver;
                         this.convert_price = response.data.transaction.convert_price;
                         this.receiver_money = response.data.transaction.receiver_money;
-
                         this.images = response.data.images;
                     })
                     .catch(error => console.log(error));
@@ -201,10 +209,11 @@
                 return this.amount = this.amount - this.commission;
             },
             totalAmount: function () {
-                const n1 = Number(this.amount);
-                this.commission = n1 * 0.15;
-                this.total_money = n1 * 0.15 + n1;
-                return this.total_money;
+                // const n1 = Number(this.amount);
+                // this.commission = n1 * 0.15;
+                // this.total_money = (n1 * 0.15) + n1;
+                // return this.total_money;
+                return this.amount;
             },
         }
     }

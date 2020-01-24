@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <button type="button" @click="collapse" class="collapsible"> Currencies</button>
+        <button type="button" @click="collapse" class="collapsible"><span class="is-size-4"> Currencies</span></button>
         <div class="content">
             <div class="field">
                 <a class="button is-primary is-large modal-button" @click="modal"
@@ -62,9 +62,10 @@
                 <div class="modal-content" style="margin-top: 200px">
                     <form @submit.prevent="mode ? update_currency():add_currency()">
                         <div class="card">
-                            <div class="card-header">
-                                <label v-show="mode" class="label">Edit Name Currency</label>
-                                <label v-show="!mode" class="label">Name Currency</label>
+                            <div class="card-header level">
+                                <label v-show="mode" class="label level-left">Edit Name Currency</label>
+                                <label v-show="!mode" class="label level-left">Name Currency</label>
+                                <div class="button level-right modal-exit" > Close</div>
                             </div>
                             <div class="card-content">
                                 <p class="control has-icons-left">
@@ -89,7 +90,7 @@
 
                     </form>
                 </div>
-                <button class="modal-close is-large" aria-label="close"></button>
+<!--                <button class="modal-close is-large" aria-label="close"></button>-->
             </div>
         </div>
     </div>
@@ -149,6 +150,7 @@
                 });
             },
             collapse() {
+                var i = 0;
                 const coll = document.getElementsByClassName("collapsible");
                 for (i = 0; i < coll.length; i++) {
                     coll[i].addEventListener("click", function () {
@@ -168,7 +170,7 @@
                 this.name = "";
                 this.status = "";
                 const modal = document.getElementById('page-modal');
-                const close = document.getElementsByClassName('modal-close')[0];
+                const close = document.getElementsByClassName('modal-exit')[0];
                 modal.style.display = 'block';
                 close.onclick = function closeModal() {
                     modal.style.display = 'none';
@@ -182,7 +184,7 @@
             editModal(currency) {
                 this.mode = true;
                 const modal = document.getElementById('page-modal');
-                const close = document.getElementsByClassName('modal-close')[0];
+                const close = document.getElementsByClassName('modal-exit')[0];
                 modal.style.display = 'block';
                 close.onclick = function closeModal() {
                     modal.style.display = 'none';

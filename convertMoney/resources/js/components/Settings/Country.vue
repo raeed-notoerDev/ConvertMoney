@@ -1,7 +1,8 @@
 <template>
     <div>
 
-        <button type="button" @click="collapse" class="collapsibleCountry"> Countries</button>
+        <button type="button" @click="collapse" class="collapsibleCountry"><span class="is-size-4"> Countries</span>
+        </button>
         <div class="content">
             <div class="field">
                 <a class="button is-primary is-large modal-button" @click="modalCountry"
@@ -62,9 +63,10 @@
                 <div class="modal-content" style="margin-top: 200px">
                     <form @submit.prevent="mode_country ? update_country():add_country()">
                         <div class="card">
-                            <div class="card-header">
-                                <label v-show="mode_country" class="label">Edit Name Country</label>
-                                <label v-show="!mode_country" class="label">Name Country</label>
+                            <div class="card-header level">
+                                <label v-show="mode_country" class="label level-left">Edit Name Country</label>
+                                <label v-show="!mode_country" class="label level-left">Name Country</label>
+                                <div class="button level-right modal-exitc"> Close</div>
                             </div>
                             <div class="card-content">
                                 <p class="control has-icons-left">
@@ -91,7 +93,7 @@
 
                     </form>
                 </div>
-                <button class="modal-close is-large" aria-label="close"></button>
+                <!--                <button class="modal-close is-large" aria-label="close"></button>-->
             </div>
         </div>
     </div>
@@ -151,6 +153,7 @@
                 });
             },
             collapse() {
+                var i = 0;
                 const coll = document.getElementsByClassName("collapsibleCountry");
                 for (i = 0; i < coll.length; i++) {
                     coll[i].addEventListener("click", function () {
@@ -170,7 +173,7 @@
                 this.country = "";
                 this.statusCountry = "";
                 const modal = document.getElementById('page-modal-country');
-                const close = document.getElementsByClassName('modal-close')[0];
+                const close = document.getElementsByClassName('modal-exitc')[0];
                 modal.style.display = 'block';
                 close.onclick = function closeModal() {
                     modal.style.display = 'none';
@@ -184,7 +187,7 @@
             editModalCountry(country) {
                 this.mode_country = true;
                 const modal = document.getElementById('page-modal-country');
-                const close = document.getElementsByClassName('modal-close')[0];
+                const close = document.getElementsByClassName('modal-exitc')[0];
                 modal.style.display = 'block';
                 close.onclick = function closeModal() {
                     modal.style.display = 'none';
