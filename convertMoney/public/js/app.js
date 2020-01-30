@@ -5902,6 +5902,68 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Statistics",
@@ -5920,11 +5982,12 @@ __webpack_require__.r(__webpack_exports__);
       transactions_approved: 0,
       transactions_blocked: 0,
       transactions_hold: 0,
-      transactions_cancel: 0
+      transactions_cancel: 0,
+      transactions: []
     };
   },
   methods: {
-    get_users_details: function get_users_details() {
+    get_details: function get_details() {
       var _this = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('api/statistics').then(function (response) {
@@ -5942,10 +6005,18 @@ __webpack_require__.r(__webpack_exports__);
         _this.transactions_cancel = response.data.transactions_cancelled;
         _this.transactions_blocked = response.data.transactions_blocked;
       });
+    },
+    get_transactions: function get_transactions() {
+      var _this2 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('api/statistics-transaction').then(function (response) {
+        _this2.transactions = response.data;
+      });
     }
   },
   created: function created() {
-    this.get_users_details();
+    this.get_details();
+    this.get_transactions();
   }
 });
 
@@ -68175,6 +68246,71 @@ var render = function() {
           ])
         ])
       ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "table-container" }, [
+      _c(
+        "table",
+        { staticClass: "table is-striped is-hoverable is-narrow is-block" },
+        [
+          _vm._m(5),
+          _vm._v(" "),
+          _c(
+            "tbody",
+            _vm._l(_vm.transactions, function(transaction) {
+              return _c("tr", { key: transaction.code }, [
+                _c(
+                  "td",
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        attrs: {
+                          to: {
+                            name: "details",
+                            params: { code: transaction.code }
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(transaction.code) +
+                            "\n                    "
+                        )
+                      ]
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(transaction.total_money))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(transaction.receiver_country_id))]),
+                _vm._v(" "),
+                transaction.status === "hold"
+                  ? _c("td", [_vm._m(6, true)])
+                  : transaction.status === "blocked"
+                  ? _c("td", [_vm._m(7, true)])
+                  : transaction.status === "approved"
+                  ? _c("td", [_vm._m(8, true)])
+                  : transaction.status === "paid"
+                  ? _c("td", [_vm._m(9, true)])
+                  : transaction.status === "cancelled"
+                  ? _c("td", [_vm._m(10, true)])
+                  : transaction.status === "waiting"
+                  ? _c("td", [_vm._m(11, true)])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("td", [
+                  _vm._v(_vm._s(_vm._f("myDate")(transaction.created_at)))
+                ])
+              ])
+            }),
+            0
+          )
+        ]
+      )
     ])
   ])
 }
@@ -68336,6 +68472,75 @@ var staticRenderFns = [
       _c("div", { staticClass: "column" }),
       _vm._v(" "),
       _c("div", {}, [_c("i", { staticClass: "fas fa-user-tie is-size-4" })])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Code")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Total Money")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Destination City")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Create Date")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: " has-text" }, [
+      _c("i", { staticClass: " " }),
+      _vm._v("HOLD ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: " has-text-danger" }, [
+      _c("i", {}, [_vm._v("BLOCKED ")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: " has-text-info" }, [
+      _c("i", {}, [_vm._v("APPROVED")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: " has-text-success" }, [
+      _c("i", {}, [_vm._v("PAIDOUT")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "has-text-danger" }, [
+      _c("i", { staticStyle: { "background-color": "#f14668" } }),
+      _vm._v("CANCELLED\n          ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "has-text-warning" }, [
+      _c("i", { staticStyle: { "background-color": "#f14668" } }),
+      _vm._v("WAITED\n          ")
     ])
   }
 ]

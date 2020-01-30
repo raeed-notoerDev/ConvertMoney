@@ -132,7 +132,69 @@
 
             </div>
         </div>
+        <div class="table-container">
 
+
+            <table class="table is-striped is-hoverable is-narrow is-block">
+                <thead>
+                <tr>
+                    <th>Code</th>
+
+                    <th>Total Money</th>
+                    <th>Destination City</th>
+                    <th>Status</th>
+
+                    <th>Create Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                    v-for="transaction in transactions"
+                    :key="transaction.code"
+                >
+                    <td>
+                        <router-link
+                            :to="{ name: 'details', params: { code: transaction.code } }"
+                        >
+                            {{ transaction.code }}
+                        </router-link>
+                    </td>
+                    <td>{{ transaction.total_money }}</td>
+                    <td>{{ transaction.receiver_country_id }}</td>
+                    <td v-if="transaction.status === 'hold'">
+                        <span class=" has-text"> <i class=" "> </i>HOLD </span>
+                    </td>
+                    <td v-else-if="transaction.status === 'blocked'">
+              <span class=" has-text-danger">
+                <i class="">BLOCKED </i>
+              </span>
+                    </td>
+                    <td v-else-if="transaction.status === 'approved'">
+              <span class=" has-text-info">
+                <i class="">APPROVED</i>
+              </span>
+                    </td>
+                    <td v-else-if="transaction.status === 'paid'">
+              <span class=" has-text-success">
+                <i class="">PAIDOUT</i>
+              </span>
+                    </td>
+                    <td v-else-if="transaction.status === 'cancelled'">
+              <span class="has-text-danger">
+                <i class="" style="background-color: #f14668"></i>CANCELLED
+              </span>
+                    </td>
+                    <td v-else-if="transaction.status === 'waiting'">
+              <span class="has-text-warning">
+                <i class="" style="background-color: #f14668"></i>WAITED
+              </span>
+                    </td>
+
+                    <td>{{ transaction.created_at | myDate }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
 
@@ -143,42 +205,49 @@
         name: "Statistics",
         data() {
             return {
-                agents_total:0,
-                agents_blocked:0,
-                agents_activated:0,
-                agents_holds:0,
-                users_sub_admins:0,
-                users_admins:0,
-                users_total:0,
-                transactions_total:0,
-                transactions_wait:0,
-                transactions_paid:0,
-                transactions_approved:0,
-                transactions_blocked:0,
-                transactions_hold:0,
-                transactions_cancel:0,
+                agents_total: 0,
+                agents_blocked: 0,
+                agents_activated: 0,
+                agents_holds: 0,
+                users_sub_admins: 0,
+                users_admins: 0,
+                users_total: 0,
+                transactions_total: 0,
+                transactions_wait: 0,
+                transactions_paid: 0,
+                transactions_approved: 0,
+                transactions_blocked: 0,
+                transactions_hold: 0,
+                transactions_cancel: 0,
+                transactions: [],
             }
         },
         methods: {
-            get_users_details() {
-                axios.get('api/statistics').then(response=>{
-                    this.agents_total =response.data.agents;
-                    this.users_total =response.data.users;
-                    this.users_admins =response.data.users_sub_admins;
-                    this.agents_activated =response.data.agents_approved;
-                    this.agents_holds =response.data.agents_hold;
-                    this.users_admins =response.data.users_admins;
-                    this.transactions_total =response.data.transactions;
-                    this.transactions_wait =response.data.transactions_waiting;
-                    this.transactions_paid =response.data.transactions_paid;
-                    this.transactions_approved =response.data.transactions_approved;
-                    this.transactions_hold =response.data.transactions_holds;
-                    this.transactions_cancel =response.data.transactions_cancelled;
-                    this.transactions_blocked =response.data.transactions_blocked;
+            get_details() {
+                axios.get('api/statistics').then(response => {
+                    this.agents_total = response.data.agents;
+                    this.users_total = response.data.users;
+                    this.users_admins = response.data.users_sub_admins;
+                    this.agents_activated = response.data.agents_approved;
+                    this.agents_holds = response.data.agents_hold;
+                    this.users_admins = response.data.users_admins;
+                    this.transactions_total = response.data.transactions;
+                    this.transactions_wait = response.data.transactions_waiting;
+                    this.transactions_paid = response.data.transactions_paid;
+                    this.transactions_approved = response.data.transactions_approved;
+                    this.transactions_hold = response.data.transactions_holds;
+                    this.transactions_cancel = response.data.transactions_cancelled;
+                    this.transactions_blocked = response.data.transactions_blocked;
+                });
+            },
+            get_transactions() {
+                axios.get('api/statistics-transaction').then(response => {
+                    this.transactions = response.data;
                 });
             }
         }, created() {
-            this.get_users_details();
+            this.get_details();
+            this.get_transactions();
         }
     }
 </script>

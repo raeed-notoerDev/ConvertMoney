@@ -37,13 +37,13 @@ class StatisticsController extends Controller
                 ->join('users_roles', 'users.id', '=', 'users_roles.user_id')
                 ->select('users.*')->where('users_roles.role_id', 1)
                 ->where('users.status', 'hold')->get()->count(),
-            'transactions' =>Transaction::count(),
-            'transactions_waiting' =>Transaction::where('status','waiting')->count(),
-            'transactions_approved' =>Transaction::where('status','approved')->count(),
-            'transactions_holds' =>Transaction::where('status','hold')->count(),
-            'transactions_paid' =>Transaction::where('status','paid')->count(),
-            'transactions_blocked' =>Transaction::where('status','blocked')->count(),
-            'transactions_cancelled' =>Transaction::where('status','canceled')->count(),
+            'transactions' => Transaction::count(),
+            'transactions_waiting' => Transaction::where('status', 'waiting')->count(),
+            'transactions_approved' => Transaction::where('status', 'approved')->count(),
+            'transactions_holds' => Transaction::where('status', 'hold')->count(),
+            'transactions_paid' => Transaction::where('status', 'paid')->count(),
+            'transactions_blocked' => Transaction::where('status', 'blocked')->count(),
+            'transactions_cancelled' => Transaction::where('status', 'canceled')->count(),
 
         ]);
     }
@@ -51,7 +51,14 @@ class StatisticsController extends Controller
 
     public function transactions()
     {
+//        $query = DB::table('users')
+//            ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
+//            ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
+//            ->select('transactions.*')->orderBy('transactions.created_at', 'desc')->take(5)->get();
+        $query = DB::table('transactions')
 
+            ->select('transactions.*')->orderBy('transactions.created_at', 'desc')->take(5)->get();
+        return response()->json($query);
     }
 
     public function transaction_receiver()

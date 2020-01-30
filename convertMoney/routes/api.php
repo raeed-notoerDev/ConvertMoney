@@ -98,5 +98,6 @@ Route::group([
 
     //Statistics
     Route::get('/statistics', 'API\StatisticsController@statistics')->name('statistics.view');
+    Route::get('/statistics-transaction', 'API\StatisticsController@transactions')->name('statistics_transaction.view');
 });
 
