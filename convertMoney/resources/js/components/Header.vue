@@ -3,7 +3,7 @@
 
         <nav class="navbar" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
-                <div class=" image is-64x64" >
+                <div class=" image is-64x64">
                     <img :src="pathPhoto()"/>
                 </div>
 
@@ -95,6 +95,7 @@
 
 <script>
     import axios from 'axios';
+    import Gate from "../Gate";
 
     export default {
         data() {
@@ -102,15 +103,20 @@
                 headerData: {},
                 logo: "",
                 company_name: "",
-                description: ""
-            }
-        },
-        created() {
+                description: "",
 
-        },
-        methods: {
+            }
+        }, methods: {
+            select_permission() {
+                axios.get('api/select-permission').then(response => {
+                    permissions = response.data;
+                    console.log(permissions);
+                    console.log('header');
+                });
+                return permissions;
+            },
             selectDataHerder() {
-                axios.get('api/setting-header').then(response => {
+                axios.get('/api/setting-header').then(response => {
                     this.headerData = response.data;
                     this.company_name = response.data.company_name;
                     this.description = response.data.description;
@@ -126,9 +132,16 @@
             logout() {
                 axios.post('/logout').then(window.location = '/login');
             }
-        }, created() {
+        },
+        created() {
+            Fire.$on('isAllow', () => {
+                this.select_permission();
+            });
+            Fire.$emit('isAllow');
             this.selectDataHerder();
-        }
+        },
+
+
     }
 </script>
 

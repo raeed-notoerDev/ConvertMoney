@@ -10,8 +10,8 @@
                 <thead>
                 <tr>
                     <th>Code</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
+                    <th>Agent Name</th>
+                    <th>User Name</th>
                     <th>Gender</th>
                     <th>Nationality</th>
                     <th>Status</th>
@@ -34,8 +34,8 @@
                             {{ member.ref_id }}
                         </router-link>
                     </td>
-                    <td>{{ member.first_name }}</td>
-                    <td>{{ member.last_name }}</td>
+                    <td>{{ member.first_name }} {{ member.last_name }}</td>
+                    <td>{{ member.user_name }}</td>
                     <td>{{ member.gender }}</td>
                     <td>{{ member.nationality }}</td>
                     <td v-if="member.status === 'hold'">
@@ -58,7 +58,7 @@
                     </td>
                     <td>{{ member.email }}</td>
                     <td>{{ member.phone_number }}</td>
-                    <td>{{ member.agent_commission }}</td>
+                    <td>{{ member.agent_commission }}%</td>
                     <td>{{ member.wallet }}</td>
                     <td>{{ member.address }}</td>
                     <td>{{ member.created_at | MyDate }}</td>

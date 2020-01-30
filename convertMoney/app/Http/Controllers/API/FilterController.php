@@ -69,138 +69,50 @@ class FilterController extends Controller
         //
     }
 
+    public function filter_transactions_client(Request $request)
+    {
+        try {
+            $query = DB::table('users')
+                ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
+                ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
+                ->select('transactions.*');
+            if ($request['date_from'] !== 'all') {
+                $query->where('transactions.created_at', '>=', $request['date_from']);
+            }
+            if ($request['date_to'] !== 'all') {
+                $query->where('transactions.created_at', '<=', $request['date_to']);
+            }
+            if ($request['status'] !== 'all') {
+                $query->where('transactions.status', $request['status']);
+            }
+            $query->where('agent_id_sender', auth('api')->user()->ref_id)->orWhere('agent_id_receiver', auth('api')->user()->ref_id);
+            return response()->json($this->list_transaction($query->get()));
+
+        } catch (\Exception $exception) {
+            error_log($exception->getMessage());
+        }
+    }
+
     public function filter_transactions(Request $request)
     {
         try {
-            if ($request['date_from'] !== 'all') {
-                if ($request['date_to'] !== 'all') {
-                    if ($request['status'] !== 'all') {
-                        if ($request['agent'] !== 'all') {
-                            $transactions = DB::table('users')
-                                ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
-                                ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                                ->select('transactions.*')
-                                ->where('transactions.created_at', '>=', $request['date_from'])
-                                ->where('transactions.created_at', '<=', $request['date_to'])
-                                ->where('transactions.status', $request['status'])
-                                ->where('transactions.agent_id_sender', $request['agent'])
-                                ->where('transactions.agent_id_receiver', $request['agent'])
-                                ->get();
-                            return response()->json($this->list_transaction($transactions));
-                        }
-                        $transactions = DB::table('users')
-                            ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
-                            ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                            ->select('transactions.*')
-                            ->where('transactions.created_at', '>=', $request['date_from'])
-                            ->where('transactions.created_at', '<=', $request['date_to'])
-                            ->where('transactions.agent_id_sender', $request['agent'])
-                            ->where('transactions.agent_id_receiver', $request['agent'])
-                            ->get();
-                        return response()->json($this->list_transaction($transactions));
-
-                    }
-                    if ($request['agent'] !== 'all') {
-                        $transactions = DB::table('users')
-                            ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
-                            ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                            ->select('transactions.*')
-                            ->where('transactions.created_at', '>=', $request['date_from'])
-                            ->where('transactions.created_at', '<=', $request['date_to'])
-                            ->where('transactions.agent_id_sender', $request['agent'])
-                            ->where('transactions.agent_id_receiver', $request['agent'])
-                            ->get();
-                        return response()->json($this->list_transaction($transactions));
-                    }
-                    $transactions = DB::table('users')
-                        ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
-                        ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                        ->select('transactions.*')
-                        ->where('transactions.created_at', '>=', $request['date_from'])
-                        ->where('transactions.created_at', '<=', $request['date_to'])
-                        ->get();
-                    return response()->json($this->list_transaction($transactions));
-                }
-                $transactions = DB::table('users')
-                    ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
-                    ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                    ->select('transactions.*')
-                    ->where('transactions.created_at', '>=', $request['date_from'])
-                    ->get();
-                return response()->json($this->list_transaction($transactions));
-
-            }
-            elseif ($request['date_to'] !== 'all')
-            {
-                if ($request['status'] !== 'all') {
-                    if ($request['agent'] !== 'all') {
-                        $transactions = DB::table('users')
-                            ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
-                            ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                            ->select('transactions.*')
-                            ->where('transactions.created_at', '<=', $request['date_to'])
-                            ->where('transactions.status', $request['status'])
-                            ->where('transactions.agent_id_sender', $request['agent'])
-                            ->where('transactions.agent_id_receiver', $request['agent'])
-                            ->get();
-                        return response()->json($this->list_transaction($transactions));
-                    }
-                    $transactions = DB::table('users')
-                        ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
-                        ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                        ->select('transactions.*')
-                        ->where('transactions.created_at', '<=', $request['date_to'])
-                        ->where('transactions.status', $request['status'])
-                        ->get();
-                    return response()->json($this->list_transaction($transactions));
-                }
-                $transactions = DB::table('users')
-                    ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
-                    ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                    ->select('transactions.*')
-                    ->where('transactions.created_at', '<=', $request['date_to'])
-                    ->get();
-                return response()->json($this->list_transaction($transactions));
-            }
-            elseif ($request['status'] !== 'all') {
-                if ($request['agent'] !== 'all') {
-                    $transactions = DB::table('users')
-                        ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
-                        ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                        ->select('transactions.*')
-                        ->where('transactions.status', $request['status'])
-                        ->where('transactions.agent_id_sender', $request['agent'])
-                        ->where('transactions.agent_id_receiver', $request['agent'])
-                        ->get();
-                    return response()->json($this->list_transaction($transactions));
-                }
-                $transactions = DB::table('users')
-                    ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
-                    ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                    ->select('transactions.*')
-                    ->where('transactions.status', $request['status'])
-                    ->get();
-                return response()->json($this->list_transaction($transactions));
-            }
-            elseif ($request['agent'] !== 'all') {
-                error_log('agents');
-                error_log($request['agent']);
-                $transactions = DB::table('users')
-                    ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
-                    ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                    ->select('transactions.*')
-                    ->where('transactions.agent_id_sender', $request['agent'])
-                    ->orWhere('transactions.agent_id_receiver', $request['agent'])
-                    ->get();
-                error_log($transactions);
-                return response()->json($this->list_transaction($transactions));
-            }
-            $transactions = DB::table('users')
+            $query = DB::table('users')
                 ->join('transactions', 'users.ref_id', '=', 'transactions.agent_id_sender')
                 ->join('countries', 'transactions.receiver_country_id', '=', 'countries.name')
-                ->select('transactions.*')
-                ->get();
-            return response()->json($this->list_transaction($transactions));
+                ->select('transactions.*');
+            if ($request['date_from'] !== 'all') {
+                $query->where('transactions.created_at', '>=', $request['date_from']);
+            }
+            if ($request['date_to'] !== 'all') {
+                $query->where('transactions.created_at', '<=', $request['date_to']);
+            }
+            if ($request['status'] !== 'all') {
+                $query->where('transactions.status', $request['status']);
+            }
+            if ($request['agent'] !== 'all') {
+                $query->where('agent_id_sender', $request['agent'])->orWhere('agent_id_receiver', $request['agent']);
+            }
+            return response()->json($this->list_transaction($query->get()));
 
         } catch (\Exception $exception) {
             error_log($exception->getMessage());
@@ -222,7 +134,7 @@ class FilterController extends Controller
                 'currency_receiver_id' => $transactions[$i]->currency_receiver_id,
                 'agent_sender' => User::where('ref_id', $transactions[$i]->agent_id_sender)->first()['first_name'] . '   ' . User::where('ref_id', $transactions[$i]->agent_id_sender)->first()['last_name'],
                 'agent_receiver' => User::where('ref_id', $transactions[$i]->agent_id_receiver)->first()['first_name'] . '   ' . User::where('ref_id', $transactions[$i]->agent_id_receiver)->first()['last_name'],
-                'city_destination' =>$transactions[$i]->receiver_country_id ,
+                'city_destination' => $transactions[$i]->receiver_country_id,
                 'status' => $transactions[$i]->status,
                 'date' => $transactions[$i]->created_at,
                 'convert_price' => $transactions[$i]->convert_price,

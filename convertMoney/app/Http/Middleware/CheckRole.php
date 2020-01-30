@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+
 class CheckRole
 {
     /**
@@ -15,7 +16,10 @@ class CheckRole
     public function handle($request, Closure $next)
     {
         if ($request->user('api') == null) {
-            abort(403);
+            return response()->json([
+                'status' => false,
+                'message' => 'You cant Update because not admin'
+            ], 403);
         }
 
         $actions = $request->route()->getAction();
@@ -23,6 +27,10 @@ class CheckRole
         if ($request->user('api')->hasAnyRole($roles) || !$roles) {
             return $next($request);
         }
-        abort(403);
+        return response()->json([
+            'status' => false,
+            'message' => 'You cant Update because not admin'
+        ], 403);
+
     }
 }

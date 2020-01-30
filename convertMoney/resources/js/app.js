@@ -4,16 +4,19 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+import axios from "axios";
 
+require('./bootstrap');
 window.Vue = require('vue');
 import VueRouter from "vue-router";
 import VueSpinners from 'vue-spinners'
 import swal from 'sweetalert2'
 import moment from 'moment';
-import print from 'print-js'
-import excel from 'vue-excel-export'
+import print from 'print-js';
+import excel from 'vue-excel-export';
+import Gate from './Gate';
 
+Vue.prototype.$gate = new Gate(window.user);
 Vue.use(excel);
 Vue.use(VueRouter);
 Vue.use(VueSpinners);
@@ -32,6 +35,8 @@ const toast = swal.mixin({
 });
 window.toast = toast;
 window.Fire = new Vue();
+window.permissions = [];
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -49,20 +54,26 @@ Vue.component('transfer-component', require('./components/TrnsferMoney/TransferM
 Vue.component('register-component', require('./components/Register.vue').default);
 Vue.component('transaction-component', require('./components/Transaction.vue').default);
 Vue.component('details-component', require('./components/DetailsTransaction.vue').default);
+// Vue.component('passport-clients', require('./components/passport/Clients.vue').default);
+// Vue.component('passport-authorized-clients', require('./components/passport/AuthorizedClients.vue').default);
+// Vue.component('passport-personal-access-tokens', require('./components/passport/PersonalAccessTokens.vue').default);
 let routes = [
-    {path: '/header', component: require('./components/Header.vue').default},
     {path: '/example', component: require('./components/ExampleComponent.vue').default},
     {path: '/transaction', component: require('./components/TrnsferMoney/TransferMoney.vue').default},
     {path: '/register', component: require('./components/Register.vue').default},
     {path: '/details/:code', component: require('./components/DetailsTransaction.vue').default, name: 'details'},
     {path: '/report', component: require('./components/Transaction.vue').default},
     {path: '/member', component: require('./components/Member.vue').default},
+    {path: '/user', component: require('./components/User.vue').default},
     {path: '/search', component: require('./components/SearchTransaction.vue').default},
     {path: '/receiver/:code', component: require('./components/ReceiverTransaction.vue').default, name: 'receiver'},
     {path: '/profile/:code', component: require('./components/Profile.vue').default, name: 'profile'},
     {path: '/setting', component: require('./components/Settings/GeneralSetting.vue').default},
     {path: '/wallet', component: require('./components/Wallet.vue').default},
     {path: '/home', component: require('./components/Statistics.vue').default},
+    {path: '/welcome', component: require('./components/Welcome.vue').default},
+    {path: '/permission/:id', component: require('./components/Permission.vue').default,name:'permission'},
+    {path: '/role', component: require('./components/Role.vue').default},
     {path: '/fish/:code', component: require('./components/FishTransaction.vue').default},
 ];
 const router = new VueRouter({
@@ -80,7 +91,7 @@ const app = new Vue({
     router,
     data() {
         return {
-            search: ''
+            search: '',
         }
     },
     methods: {
@@ -89,6 +100,6 @@ const app = new Vue({
         },
     },
     created() {
-    }
 
+    }
 });

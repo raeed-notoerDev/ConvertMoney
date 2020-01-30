@@ -129,6 +129,7 @@
                             <input
                                 type="text"
                                 class="input is-size-6 "
+                                v-model="receiver_address"
 
                             />
                         </div>
@@ -142,7 +143,8 @@
                         <div class="columns consumer">
                             <input
                                 type="text"
-                                class="input is-size-6 "/>
+                                class="input is-size-6 "
+                                v-model="receiver_other_info"/>
                         </div>
                     </div>
                 </div>
@@ -156,6 +158,7 @@
                         <input
                             type="text"
                             class="input is-size-6 "
+                            v-model="receiver_passport_ID"
 
                         />
                     </div>
@@ -167,7 +170,8 @@
                     <div class="columns consumer">
                         <input
                             type="text"
-                            class="input is-size-6 "/>
+                            class="input is-size-6 "
+                            v-model="receiver_profession"/>
                     </div>
                     <div class="columns consumer">
                         <p class="">
@@ -178,6 +182,7 @@
                         <input
                             type="text"
                             class="input is-size-6 "
+                            v-model="receiver_gender"
                         />
                     </div>
                     <div class="columns consumer">
@@ -189,6 +194,20 @@
                         <input
                             type="text"
                             class="input is-size-6 "
+                            v-model="receiver_nationality"
+
+                        />
+                    </div>
+                    <div class="columns consumer">
+                        <p class="">
+                            Birthday
+                        </p>
+                    </div>
+                    <div class="columns consumer">
+                        <input
+                            type="text"
+                            class="input is-size-6 "
+                            v-model="receiver_birthday"
 
                         />
                     </div>
@@ -341,7 +360,7 @@
         <br>
         <br>
         <br>
-        <div class="icon has-text-danger is-size-3"><i class="fas fa-ban"></i></div>
+        <div class="icon has-text-danger is-size-3"><i class="fas fa-info-circle"></i></div>
         <br>
         <strong class="is-size-5">NO DATA AVAILABLE</strong>
         <br>
@@ -370,8 +389,6 @@
                 total_money: "",
                 currency_receiver_id: "",
                 currency_sender_id: "",
-                receiver_phone_number: "",
-                receiver_full_name: "",
                 name_sender: "",
                 passport_ID: "",
                 other_info: "",
@@ -387,9 +404,19 @@
                 photo: "",
                 profession: "",
                 birthday: "",
-                receiver_money: null,
                 images: [],
-                name_image: ""
+                name_image: "",
+                receiver_money: null,
+                receiver_nationality: "",
+                receiver_gender: "",
+                receiver_profession: "",
+                receiver_phone_number: "",
+                receiver_full_name: "",
+                receiver_birthday: "",
+                receiver_address: "",
+                receiver_other_info: "",
+                receiver_passport_ID: "",
+
             }
         },
         methods: {
@@ -408,7 +435,7 @@
                 this.name_image = file.name;
                 reader.onloadend = async (file) => {
                     this.photo = reader.result;
-                    await axios.post('api/image-transaction/' + this.$route.params.code,
+                    await axios.post('/api/image-transaction/' + this.$route.params.code,
                         {
                             name: this.name_image,
                             photo: this.photo
@@ -420,18 +447,18 @@
 
             },
             getTransactionPhoto(picture) {
-                return "/storage/images/" + picture;
+                return "/images/" + picture;
             },
             delete_image(name) {
-                axios.post('api/delete-image',
+                axios.post('/api/delete-image',
                     {
-                        code: this.code,
+                        code: this.$route.params.code,
                         name: name
                     }).then(Fire.$emit('ShowImages'))
             },
             async details_transaction() {
                 console.log(this.$route.params.code);
-                await axios.post('/api/show-transaction/' + this.code)
+                await axios.post('/api/show-transaction/' + this.$route.params.code)
                     .then(response => {
                         this.transfer = response.data.transaction;
                         this.commission = response.data.transaction.commission;
@@ -440,6 +467,14 @@
                         this.currency_receiver_id = response.data.transaction.currency_receiver;
                         this.convert_price = response.data.transaction.convert_price;
                         this.receiver_money = response.data.transaction.receiver_money;
+                        this.receiver_nationality = response.data.transaction.receiver_nationality;
+                        this.receiver_gender = response.data.transaction.receiver_gender;
+                        this.receiver_profession = response.data.transaction.receiver_profession;
+                        this.receiver_full_name = response.data.transaction.receiver_full_name;
+                        this.receiver_birthday = response.data.transaction.receiver_birthday;
+                        this.receiver_address = response.data.transaction.receiver_address;
+                        this.receiver_other_info = response.data.transaction.receiver_other_info;
+                        this.receiver_passport_ID = response.data.transaction.receiver_passport_ID;
                         this.images = response.data.images;
                         if (this.images !== null) {
                             this.show_img = true;
@@ -460,17 +495,18 @@
                     country_id: this.country_id,
                     receiver_phone_number: this.receiver_phone_number,
                     receiver_full_name: this.receiver_full_name,
-                    receiver_passport_number: this.passport_ID,
-                    receiver_address: this.address,
-                    receiver_nationality: this.sender_nationality,
-                    receiver_gender: this.gender_sender,
-                    receiver_profession: this.profession,
-                    receiver_birthday: this.birthday,
-                    other_info: this.other_info,
+                    receiver_passport_number: this.receiver_passport_ID,
+                    receiver_address: this.receiver_address,
+                    receiver_nationality: this.receiver_nationality,
+                    receiver_gender: this.receiver_gender,
+                    receiver_profession: this.receiver_profession,
+                    receiver_birthday: this.receiver_birthday,
+                    receiver_other_info: this.receiver_other_info,
                     code_receiver: this.transfer.code_receiver
                 }).then(response => {
-                    swal.fire('Success', 'Transaction Has Been Paid', 'success');
+                    swal.fire('Success', response.data.message + "", 'success');
                     console.log(response.data);
+                    location.reload();
                 });
             },
             async sellectAllCurrency() {
@@ -479,31 +515,12 @@
                     this.currencies = response.data.currency_list;
                 });
             },
-            async convert() {
-                await axios.get(
-                    "https://free.currconv.com/api/v7/convert?q=" +
-                    this.currency_sender_id +
-                    "_" +
-                    this.currency_receiver_id +
-                    "&compact=ultra&apiKey=301cb83516aa3d45d387").then(response =>
-                    (this.convert_price = response.data[this.currency_sender_id + "_" + this.currency_receiver_id])
-                );
-            },
-            code_transaction() {
-                axios.get('/api/transaction').then(response => {
-                    // this.dropzoneOptions.url = 'http://localhost:8000/api/transaction/' + response.data.code;
-                    this.code = response.data.code;
-                });
-                return this.code;
-            }
         },
         created() {
-            this.sellectAllCurrency();
             this.details_transaction();
-            this.code_transaction();
             Fire.$on('ShowImages', () => {
                 this.show_img = true;
-                axios.get('api/show-images/' + this.code).then(response => {
+                axios.get('/api/show-images/' + this.$route.params.code).then(response => {
                     this.images = response.data.list_images;
                     console.log('images  ' + this.images);
                     console.log('data  ' + response.data.list_images);

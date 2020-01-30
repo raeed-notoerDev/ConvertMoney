@@ -67,12 +67,15 @@
                         'Your file has been updated.',
                         'success'
                     );
-                    location.reload()
-                }).catch(swal.fire(
-                    'error!',
-                    'Your can`t updated.',
-                    'info'
-                ))
+                    // location.reload()
+                }).catch(error=>{
+                    console.log(error);
+                    swal.fire(
+                        'error!',
+                        error.response.data.message,
+                        'info'
+                    )
+                })
             },
             selectDataHerder() {
                 axios.get('api/setting-header').then(response => {

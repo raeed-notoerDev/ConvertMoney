@@ -17,5 +17,6 @@ class Beneficiary extends Model
         'nationality',
         'gender',
         'profession',
+        'other_info',
     ];
 }

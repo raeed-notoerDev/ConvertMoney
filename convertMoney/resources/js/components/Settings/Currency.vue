@@ -129,6 +129,13 @@
                         ));
                         Fire.$emit("AddCurrency");
                     }
+                }).catch(error=>{
+                    console.log(error);
+                    swal.fire(
+                        'error!',
+                        error.response.data.message,
+                        'info'
+                    )
                 })
             },
             update_currency() {
@@ -141,7 +148,14 @@
                     Fire.$emit('AddCurrency'),
                     this.name = "",
                     document.getElementById('page-modal').style.display = 'none'
-                ]);
+                ]).catch(error=>{
+                    console.log(error);
+                    swal.fire(
+                        'error!',
+                        error.response.data.message,
+                        'info'
+                    )
+                });
             },
             status_currency(id) {
                 axios.patch('api/currency/' + id).then(response => {
@@ -205,7 +219,14 @@
                     Fire.$emit('AddCurrency'),
                     this.name = "",
 
-                ]);
+                ]).catch(error=>{
+                    console.log(error);
+                    swal.fire(
+                        'error!',
+                        error.response.data.message,
+                        'info'
+                    )
+                });
                 document.getElementById('page-modal').style.display = 'none';
 
                 // // toast.fire({

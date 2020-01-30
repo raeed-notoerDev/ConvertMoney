@@ -6,6 +6,7 @@ use App\Beneficiary;
 use App\Country;
 use App\Http\Controllers\Controller;
 use App\Member;
+use App\Role;
 use App\Transaction;
 use App\User;
 use App\Wallet;
@@ -21,7 +22,36 @@ class MembersController extends Controller
 
     public function index()
     {
-        return response()->json(User::all());
+        $members = User::all();
+
+
+        return response()->json($this->list_members($members));
+    }
+
+    function list_members($members)
+    {
+        $myArray = [];
+        for ($i = 0; $i < $members->count(); $i++) {
+            if ($members[$i]->hasAnyRole('client')){
+                array_push($myArray, (object)[
+                    'ref_id' => $members[$i]->ref_id,
+                    'first_name' => $members[$i]->first_name,
+                    'last_name' => $members[$i]->last_name,
+                    'user_name' => $members[$i]->user_name,
+                    'gender' => $members[$i]->gender,
+                    'nationality' => $members[$i]->nationality,
+                    'status' => $members[$i]->status,
+                    'email' => $members[$i]->email,
+                    'phone_number' => $members[$i]->phone_number,
+                    'agent_commission' =>$members[$i]->agent_commission,
+                    'wallet' => $members[$i]->wallet,
+                    'address' => $members[$i]->address,
+                    'created_at' => $members[$i]->created_at,
+                ]);
+            }
+
+        }
+        return $myArray;
     }
 
     public function login(Request $request)
@@ -297,7 +327,8 @@ class MembersController extends Controller
                     'birthday' => $input['receiver_birthday'],
                     'nationality' => $input['receiver_nationality'],
                     'gender' => $input['receiver_gender'],
-                    'profession' => $input['receiver_profession']
+                    'profession' => $input['receiver_profession'],
+                    'other_info' => $input['receiver_other_info'],
                 ]);
                 $transaction->update([
                     'status' => 'paid',

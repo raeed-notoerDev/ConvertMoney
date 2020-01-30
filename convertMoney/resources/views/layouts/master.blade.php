@@ -15,6 +15,7 @@
 
     <link href="{{asset('css/app.css') }}" rel="stylesheet">
     <link href="{{asset("lity/dist/lity.css")}}" rel="stylesheet">
+
 </head>
 <body>
 <div class=wrapper id="app">
@@ -33,52 +34,76 @@
                 <p class="menu-label has-text-white has-background-success">Transaction Management</p>
                 <ul class=menu-list>
                     <li>
-                        <router-link onclick="sideBar(event)" to="/transaction" class="page has-text-success"><span class="icon is-small">
+                        <router-link onclick="sideBar(event)" to="/transaction" class="page has-text-success"><span
+                                class="icon is-small">
                                 <i class="fas fa-paper-plane"></i></span> Send Money
                         </router-link>
                     </li>
                     <li>
-                        <router-link  to="/report" class="page has-text-success"  onclick="sideBar(event)">Transaction Reports</router-link>
-                    </li>
-                    <li>
-                        <router-link to="/search" class="page has-text-success"  onclick="sideBar(event)">Transaction Receiver</router-link>
-                    </li>
-                    <li>
-                        <router-link to="/history" class="page has-text-success"  onclick="sideBar(event)">Transaction History</router-link>
-                    </li>
-                </ul>
-                <p class="menu-label has-background-danger has-text-white">Members Management</p>
-                <ul class=menu-list>
-                    <li>
-                        <router-link to="/register" class="page has-text-danger"  onclick="sideBar(event)"><span class="icon is-small"><i
-                                    class="fa fa-bar-chart"></i></span> Add Members
+                        <router-link to="/report" class="page has-text-success" onclick="sideBar(event)">Transaction
+                            Reports
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/member" class="page has-text-danger"  onclick="sideBar(event)">Members</router-link>
-                    </li>
-                </ul>
-                <p class="menu-label has-background-grey has-text-white"> Finance Management</p>
-                <ul class=menu-list>
-                    <li>
-                        <router-link to="/wallet" class="page has-text-grey"  onclick="sideBar(event)"><span class="icon is-small"><i
-                                    class="fa fa-bar-chart"></i></span>Agents List
+                        <router-link to="/search" class="page has-text-success" onclick="sideBar(event)">Transaction
+                            Payout
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/report_f" class="page has-text-grey"  onclick="sideBar(event)"> Finances Reports</router-link>
-                    </li>
-                </ul>
-                <p class="menu-label has-background-primary"> Settings </p>
-                <ul class=menu-list>
-                    <li>
-                        <router-link to="/setting" class="page has-text-primary"  onclick="sideBar(event)"><span class="icon is-small"><i
-                                    class="fa fa-bar-chart"></i></span>General
+                        <router-link to="/history" class="page has-text-success" onclick="sideBar(event)">Transaction
+                            History
                         </router-link>
                     </li>
+                </ul>
+                @can('isAdmin')
+                    <p class="menu-label has-background-danger has-text-white">Agents Management</p>
+                    <ul class=menu-list>
+                        <li>
+                            <router-link to="/register" class="page has-text-danger" onclick="sideBar(event)"><span
+                                    class="icon is-small"><i
+                                        class="fa fa-bar-chart"></i></span> Add Agent
+                            </router-link>
+                        </li>
+                        <li>
+                            <router-link to="/member" class="page has-text-danger" onclick="sideBar(event)">Agents
+                            </router-link>
+                        </li>
+                    </ul>
 
-                </ul>
+                    <p class="menu-label has-background-grey has-text-white"> Finance Management</p>
+                    <ul class=menu-list>
+                        <li>
+                            <router-link to="/wallet" class="page has-text-grey" onclick="sideBar(event)"><span
+                                    class="icon is-small"><i
+                                        class="fa fa-bar-chart"></i></span>Agents List
+                            </router-link>
+                        </li>
+                        <li>
+                            <router-link to="/report_f" class="page has-text-grey" onclick="sideBar(event)"> Finances
+                                Reports
+                            </router-link>
+                        </li>
+                    </ul>
 
+                    <p class="menu-label has-background-primary"> Settings </p>
+                    <ul class=menu-list>
+                        <li>
+                            <router-link to="/setting" class="page has-text-primary" onclick="sideBar(event)"><span
+                                    class="icon is-small"><i
+                                        class="fa fa-bar-chart"></i></span>General
+                            </router-link>
+                            <router-link to="/user" class="page has-text-primary" onclick="sideBar(event)"><span
+                                    class="icon is-small"><i
+                                        class="fa fa-bar-chart"></i></span>Users
+                            </router-link>
+                            <router-link to="/role" class="page has-text-primary" onclick="sideBar(event)"><span
+                                    class="icon is-small"><i
+                                        class="fa fa-bar-chart"></i></span>Role & Permissions
+                            </router-link>
+                        </li>
+
+                    </ul>
+                @endcan
             </nav>
         </aside>
         <main class="column main">
@@ -143,7 +168,6 @@
         }
 
 
-
         if (tabId === 'sender') {
             document.getElementById('send').className += ' is-info';
             document.getElementById('info').className += ' is-static';
@@ -162,6 +186,7 @@
         event.currentTarget.className += " is-active";
 
     }
+
     function sideBar(event) {
         // Get all element with class tablinks and remove class is-active
         page = document.getElementsByClassName("page");
@@ -178,5 +203,10 @@
 
 
 </script>
+@auth()
+    <script>
+        window.user = @json(auth()->user())
+    </script>
+@endauth
 </body>
 </html>

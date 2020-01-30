@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\User;
+
 use Laravel\Passport\Passport;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -15,7 +15,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-         'App\Model' => 'App\Policies\ModelPolicy',
+        'App\Model' => 'App\Policies\ModelPolicy',
     ];
 
     /**
@@ -26,12 +26,11 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-//        $this->app['auth']->viaRequest('api', function ($request) {
-//            if ($request->input('api_token')) {
-//                return User::where('api_token', $request->input('api_token'))->first();
-//            }
-//        });
+        Gate::define('isAdmin', function ($user) {
+            return $user->hasAnyRole('admin') === true;
+        });
+
         Passport::routes();
-        //
+
     }
 }

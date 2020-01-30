@@ -9,7 +9,7 @@
                                 <div class="column">
                                 <span>
                                   <br/>
-                                    Date :<strong>{{ transaction.date }}</strong>
+                                  Sending  Date :<strong>{{ transaction.date }}</strong>
                                 </span>
                                 </div>
                                 <br/>

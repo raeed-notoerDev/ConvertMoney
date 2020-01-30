@@ -1,7 +1,7 @@
 <template>
-    <div class="container-fluid">
+    <div class="container ">
         <div class="level">
-            <strong class="is-size-3 level-left"> MEMBERS</strong>
+            <strong class="is-size-3 level-left"> AGENTS</strong>
             <button class="button level-right print-none" @click="printData"><i class="fas fa-print"></i>print</button>
         </div>
 
@@ -11,15 +11,15 @@
                 <thead>
                 <tr>
                     <th>Code</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
+                    <th>Agent Name</th>
+                    <th> User Name</th>
                     <th>Gender</th>
                     <th>Nationality</th>
                     <th>Status</th>
                     <th>Email</th>
                     <th>Phone Number</th>
                     <th>Agent Commission</th>
-                    <th>Wallet</th>
+                    <th>Account</th>
                     <th>Address</th>
                     <th>Registered At</th>
                     <th><span class="level-item">Control</span></th>
@@ -35,8 +35,8 @@
                             {{ member.ref_id }}
                         </router-link>
                     </td>
-                    <td>{{ member.first_name }}</td>
-                    <td>{{ member.last_name }}</td>
+                    <td>{{ member.first_name }}  {{ member.last_name }}</td>
+                    <td>{{ member.user_name }}</td>
                     <td>{{ member.gender }}</td>
                     <td>{{ member.nationality }}</td>
                     <td v-if="member.status === 'hold'">
@@ -59,7 +59,7 @@
                     </td>
                     <td>{{ member.email }}</td>
                     <td>{{ member.phone_number }}</td>
-                    <td>{{ member.agent_commission }}</td>
+                    <td>{{ member.agent_commission }}%</td>
                     <td>{{ member.wallet }}</td>
                     <td>{{ member.address }}</td>
                     <td>{{ member.created_at | MyDate }}</td>

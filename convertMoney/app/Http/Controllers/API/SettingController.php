@@ -7,10 +7,16 @@ use App\Currency;
 use App\Http\Controllers\Controller;
 use App\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class SettingController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -204,6 +210,7 @@ class SettingController extends Controller
 
     public function getDataHeader()
     {
+
         return response()->json([
             'logo' => Setting::where('key', 'logo')->first()['value'],
             'company_name' => Setting::where('key', 'company_name')->first()['value'],
@@ -211,20 +218,21 @@ class SettingController extends Controller
         ]);
     }
 
+
     public function updateHeaderData(Request $request)
     {
 //        try {
 
-            $validator = Validator::make($request->all(), [
-                'company_name' => 'string',
-                'description' => 'string',
+        $validator = Validator::make($request->all(), [
+            'company_name' => 'string',
+            'description' => 'string',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()
             ]);
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => $validator->errors()
-                ]);
-            }
+        }
         $company_name = Setting::where('key', 'company_name')->first()['value'];
         $description = Setting::where('key', 'description')->first();
         $currentPhoto = Setting::where('key', 'logo')->first()['value'];
@@ -257,4 +265,5 @@ class SettingController extends Controller
             'message' => 'Settings Updated Successfully :)'
         ]);
     }
+
 }

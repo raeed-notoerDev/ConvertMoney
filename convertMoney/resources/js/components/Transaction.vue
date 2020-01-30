@@ -8,7 +8,7 @@
                 <!--                :data="transactions">-->
                 <!--                <i class="fas fa-file-excel"> </i> Excel-->
                 <!--            </export-excel>-->
-                <div class=" button    is-fullwidth " @click="someJSONdata">
+                <div class=" button is-fullwidth " @click="someJSONdata">
                     <i class="fas fa-print"></i> Print
                 </div>
             </div>
@@ -41,15 +41,17 @@
                 <div class="select">
                     <select v-model="status">
                         <option>all</option>
-                        <option>Received</option>
-                        <option>Hold</option>
-                        <option>Blocked</option>
-                        <option>Accepted</option>
-                        <option>Cancelled</option>
+                        <option value="paid">PaidOut</option>
+                        <option value="hold">Hold</option>
+                        <option value="blocked">Blocked</option>
+                        <option value="approved">Approved</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="waiting">Waiting</option>
                     </select>
                 </div>
             </div>
-            <div class="column">
+
+            <div class="column" v-if="result===true">
                 Agents
                 <div class="select">
                     <select v-model="agent">
@@ -58,16 +60,23 @@
                             v-for="agent in agents"
                             :key="agent.id"
                             :id="agent.id"
-                            :value="agent.id"
-                        >{{ agent.first_name }} {{agent.last_name}}
+                            :value="agent.ref_id"
+                        >{{ agent.user_name}}
                         </option>
                     </select>
                 </div>
             </div>
+
             <div class="column">
-                <button
-                    @click="filter_transaction"
-                    class="button is-rounded is-outlined is-primary print-none"
+                <button v-if="result===true"
+                        @click="filter_transaction"
+                        class="button is-rounded is-outlined is-primary print-none"
+                >
+                    Filter
+                </button>
+                <button v-else-if="result_client===true"
+                        @click="filter_transaction_client"
+                        class="button is-rounded is-outlined is-primary print-none"
                 >
                     Filter
                 </button>
@@ -170,10 +179,22 @@
                 transactions: [],
                 agents: [],
                 code: null,
-                transfer: {}
+                transfer: {},
+                result: false,
+                result_client: false
             };
         },
         methods: {
+            isAdmin() {
+                axios.get('api/select-role').then(response => {
+                    console.log(response.data.admin);
+                    this.result = response.data.admin;
+                    this.result_client = response.data.client;
+                    console.log(this.result);
+                    if (this.result === true)
+                        Fire.$emit('is_Admin');
+                });
+            },
             someJSONdata() {
                 // printJS({
                 //     printable: this.transactions,
@@ -185,6 +206,10 @@
                 window.print()
             },
             async filter_transaction() {
+                if (this.date_from === "")
+                    this.date_from = 'all';
+                if (this.date_to === "")
+                    this.date_to = 'all';
                 await axios.post(
                     'api/filter-transactions',
                     {
@@ -203,14 +228,37 @@
                         console.log(error);
                     });
             },
+            async filter_transaction_client() {
+                if (this.date_from === "")
+                    this.date_from = 'all';
+                if (this.date_to === "")
+                    this.date_to = 'all';
+                await axios.post(
+                    'api/filter-transactions-client',
+                    {
+                        status: this.status,
+                        date_from: this.date_from,
+                        date_to: this.date_to,
+                    }
+                ).then(response => {
+                    console.log(response);
+                    this.transactions = response.data
+                })
+                    .catch(error => {
+                        // eslint-disable-next-line no-console
+                        console.log(error);
+                    });
+            },
             async details(code) {
                 this.$router.push("/details/" + code)
             },
             async selectAllAgents() {
                 await axios
                     .get('api/member')
-                    .then(({data}) => this.agents = data)
-
+                    .then(
+                        ({data}) =>
+                            this.agents = data
+                    )
             },
             // details_transaction(code) {
             //     this.code = code;
@@ -225,7 +273,12 @@
             // }
         },
         created() {
-            this.selectAllAgents();
+            this.isAdmin();
+            Fire.$on('is_Admin', () => {
+                this.selectAllAgents();
+            });
+
+
         }
     };
 </script>

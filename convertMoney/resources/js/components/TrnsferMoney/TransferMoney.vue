@@ -143,7 +143,7 @@
                                     <p class="heading">Exchange Rate</p>
                                     <p class="">
                                         1 <span>{{ currency_sender_id }}</span> =
-                                        <span class="is-danger">{{ convert_price }}</span>
+                                        <span class="is-danger">{{( convert_price ) }}</span>
                                         <span> {{ currency_receiver_id }}</span>
                                     </p>
                                     <p>................................................</p>
@@ -595,7 +595,7 @@
                 member: {},
                 country_member: "",
                 images: [],
-                show_img : false,
+                show_img: false,
                 route: false,
                 total_money: "",
                 currency_receiver_id: "USD",
@@ -624,6 +624,7 @@
                 beneficiaries: [],
                 beneficiariesR: [],
                 button: true,
+                real_price: '',
                 // dropzoneOptions: {
                 //     url: this.url_images,
                 //     thumbnailWidth: 40,
@@ -764,9 +765,15 @@
                     this.currency_sender_id +
                     "_" +
                     this.currency_receiver_id +
-                        "&compact=ultra&apiKey=301cb83516aa3d45d387").then(response =>
-                    (this.convert_price =
-                        response.data[this.currency_sender_id + "_" + this.currency_receiver_id])
+                    "&compact=ultra&apiKey=301cb83516aa3d45d387").then(response => {
+                        this.real_price = response.data[this.currency_sender_id + "_" + this.currency_receiver_id];
+                        this.convert_price =
+                            (response.data[this.currency_sender_id + "_" + this.currency_receiver_id]) * 100;
+                        this.convert_price = parseInt(this.convert_price);
+                        this.convert_price = parseFloat(this.convert_price) / 100;
+
+
+                    }
                 );
             },
             code_transaction() {
@@ -859,7 +866,9 @@
             totalAmount: function () {
                 const n1 = Number(this.amount);
                 // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-                this.commission = n1 * 0.15;
+                this.commission = n1 * 0.15 * 100;
+                this.commission = parseInt(this.commission);
+                this.commission = parseFloat(this.commission) / 100;
                 // eslint-disable-next-line vue/no-side-effects-in-computed-properties
                 this.total_money = n1 * 0.15 + n1;
                 return this.total_money;
